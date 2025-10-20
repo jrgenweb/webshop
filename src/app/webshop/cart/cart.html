@@ -19,7 +19,7 @@
         <td>{{ c.productName }}</td>
 
         <td>{{ c.priceWithTax | currency : "Ft" : "symbol" : "1.0-0" }}</td>
-        <td>{{ c.amount }}</td>
+        <td>{{ c.amount | unit : "db" }}</td>
         <td>{{ c.sum | currency : "Ft" : "symbol" : "1.0-0" }}</td>
         <td>
           <button
@@ -40,7 +40,7 @@
       </tr>
       <tr>
         <td colspan="3"></td>
-        <td>{{ getCount() }}</td>
+        <td>{{ getCount() | unit : "db" }}</td>
         <td>{{ getSum() | currency : "Ft" : "symbol" : "1.0-0" }}</td>
       </tr>
     </tfoot>

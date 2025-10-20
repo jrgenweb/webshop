@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { Product } from '../../shared/services/product';
 import { Cart as CartService } from '../../shared/services/cart';
 import { AsyncPipe, CurrencyPipe, DecimalPipe, NgIf } from '@angular/common';
+import { UnitPipe } from '../../shared/pipes/unit-pipe';
 
 @Component({
   selector: 'app-cart',
-  imports: [AsyncPipe, CurrencyPipe, DecimalPipe],
+  imports: [AsyncPipe, CurrencyPipe, UnitPipe],
   templateUrl: './cart.html',
   styleUrl: './cart.scss',
 })

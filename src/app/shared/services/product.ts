@@ -24,7 +24,7 @@ export class Product {
     });
   }
 
-  getAll(): Observable<IProduct[]> {
+  private getAll(): Observable<IProduct[]> {
     const products = sessionStorage.getItem('products');
     if (products) return of(JSON.parse(products)) as Observable<IProduct[]>;
     return this.http
@@ -44,7 +44,12 @@ export class Product {
   }
 
   applyFilter(): void {
-    if (!this.searchString && !this.selectedCategoryId) {
+    if (
+      !this.searchString &&
+      !this.selectedCategoryId &&
+      !this.minPrice &&
+      !this.maxPrice
+    ) {
       this.$filteredProducts.next(this.products);
     } else {
       let filteredProducts = this.products.filter((p) => {

@@ -17,10 +17,6 @@ import { FormsModule } from '@angular/forms';
 export class ListProducts implements OnInit {
   categories!: ICategory[];
 
-  /** filterhez */
-  selectedCategoryId?: number;
-  searchString?: string;
-
   constructor(
     public productService: Product,
     private categoryService: Category,
@@ -46,6 +42,5 @@ export class ListProducts implements OnInit {
 
   addToCart(product: IProduct, amount: number) {
     this.cartService.add(product, amount);
-    console.log(this.cartService.$cart.value);
   }
 }
