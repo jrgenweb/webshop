@@ -1,0 +1,62 @@
+<h2>Termékek</h2>
+<div class="row">
+  <div class="categories col-md-3">
+    <app-filter></app-filter>
+    <ul class="list-group rounded shadow">
+      @for(category of categories;track $index){
+
+      <!--<li class="list-group-item active">Active item</li>-->
+      <li
+        class="list-group-item text-nowrap d-flex align-items-center gap-2 bg-hover-primary"
+      >
+        <img
+          [src]="category.image"
+          alt=""
+          class="img-thumbnail rounded-circle"
+          (error)="onImageError($event)"
+        />
+
+        {{ category.name }}
+      </li>
+
+      }
+    </ul>
+  </div>
+
+  <div class="row col-md-9">
+    @for(product of products;track $index){
+
+    <div class="col-md-3 mb-4">
+      <div class="card h-100">
+        <div class="ratio ratio-1x1">
+          <img
+            class="card-img-top object-fit-cover"
+            src="{{ product.images[0] }}"
+            alt="Title"
+            (error)="onImageError($event)"
+          />
+        </div>
+        <div class="card-body">
+          <h4 class="card-title">{{ product.title }}</h4>
+          <p class="card-text">{{ product.description }}</p>
+        </div>
+        <div class="card-footer">
+          <div class="mb-3 d-flex gap-1">
+            <input
+              type="number"
+              class="form-control"
+              name="quantity"
+              id="quantity"
+              aria-describedby="helpId"
+              placeholder=""
+              value="1"
+              min="1"
+            />
+            <button class="btn btn-primary text-nowrap">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+</div>

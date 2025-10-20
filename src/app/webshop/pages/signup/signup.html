@@ -1,0 +1,143 @@
+<div class="col-md-6 offset-3 bg-light p-2 rounded shadow mt-5">
+  <form [formGroup]="userForm" (submit)="onSubmit()">
+    <h2 class="text-center my-3">Regisztráció</h2>
+
+    <div class="mb-3">
+      <label for="lastname" class="form-label">Vezetéknév</label>
+      <input
+        type="text"
+        class="form-control"
+        [class.is-valid]="
+          userForm.get('lastname')?.touched && userForm.get('lastname')?.valid
+        "
+        [class.is-invalid]="
+          userForm.get('lastname')?.touched && userForm.get('lastname')?.invalid
+        "
+        name="lastname"
+        id="lastname"
+        aria-describedby="helpId"
+        placeholder=""
+        formControlName="lastname"
+      />
+      @if(userForm.get('lastname')?.touched &&
+      userForm.get('lastname')?.invalid){
+      <small class="form-text text-danger">A mező kitöltése kötelező!</small>
+      }
+    </div>
+    <div class="mb-3">
+      <label for="firstname" class="form-label">Keresztnév</label>
+      <input
+        type="text"
+        class="form-control"
+        [class.is-valid]="
+          userForm.get('firstname')?.touched && userForm.get('firstname')?.valid
+        "
+        [class.is-invalid]="
+          userForm.get('firstname')?.touched &&
+          userForm.get('firstname')?.invalid
+        "
+        name="firstname"
+        id="firstname"
+        aria-describedby="helpId"
+        placeholder=""
+        formControlName="firstname"
+      />
+      @if(userForm.get('firstname')?.touched &&
+      userForm.get('firstname')?.invalid){
+      <small class="form-text text-danger">A mező kitöltése kötelező!</small>
+      }
+    </div>
+    <div class="mb-3">
+      <label for="" class="form-label">Email cím</label>
+      <input
+        type="email"
+        class="form-control"
+        [class.is-valid]="
+          userForm.get('email')?.touched && userForm.get('email')?.valid
+        "
+        [class.is-invalid]="
+          userForm.get('email')?.touched && userForm.get('email')?.invalid
+        "
+        name="email"
+        id="email"
+        aria-describedby="helpId"
+        placeholder=""
+        formControlName="email"
+      />
+
+      @if(userForm.get('email')?.touched && userForm.get('email')?.invalid){
+      <small class="form-text text-danger">A mező kitöltése kötelező!</small>
+
+      @if(userForm.get('email')?.getError("email")){ érvénytelen email } }
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Jelszó</label>
+      <input
+        type="password"
+        class="form-control"
+        [class.is-valid]="
+          userForm.get('password')?.touched && userForm.get('password')?.valid
+        "
+        [class.is-invalid]="
+          userForm.get('password')?.touched && userForm.get('password')?.invalid
+        "
+        name="password"
+        id="password"
+        aria-describedby="helpId"
+        placeholder=""
+        formControlName="password"
+      />
+      @if(userForm.get('password')?.getError("passwordPattern")){
+      <small id="helpId" class="form-text text-danger"
+        >A jelszónak legalább 8 karakter hosszúnak kell lennie és kis és nagy
+        betűt számokat illetve legalább egy speciális karaktert kell
+        tartalmaznia.
+      </small>
+      }
+    </div>
+    <div class="mb-3">
+      <label for="password2" class="form-label">Jelszó megerősítése</label>
+      <input
+        type="password"
+        class="form-control"
+        [class.is-valid]="
+          userForm.get('password2')?.touched && userForm.get('password2')?.valid
+        "
+        [class.is-invalid]="
+          userForm.get('password2')?.touched &&
+          userForm.get('password2')?.invalid
+        "
+        name="password2"
+        id="password2"
+        aria-describedby="helpId"
+        placeholder=""
+        formControlName="password2"
+      />
+
+      @if(userForm.getError("passwordMismatch")){
+      <small id="helpId" class="form-text text-danger"
+        >Nem egyeznek a jelszavak
+      </small>
+      }
+    </div>
+    <div class="mb-3">
+      <label for="avatar" class="form-label">Profil kép</label>
+      <input
+        type="text"
+        class="form-control"
+        name="avatar"
+        id="avatar"
+        placeholder=""
+        aria-describedby="fileHelpId"
+      />
+      <div id="fileHelpId" class="form-text">
+        Csak érvényes kép url elfogadott.
+      </div>
+      @if(userForm.get('avatar')?.getError('fileError')){
+      <small class="form-text text-danger">Érvénytelen kép URL</small>
+      }
+    </div>
+
+    <button class="btn btn-success w-100" type="submit">Regisztráció</button>
+  </form>
+</div>
