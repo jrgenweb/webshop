@@ -5,6 +5,7 @@ import { About } from './webshop/pages/about/about';
 import { Contact } from './webshop/pages/contact/contact';
 import { Signup } from './webshop/pages/signup/signup';
 import { Signin } from './webshop/pages/signin/signin';
+import { Error } from './webshop/error/error';
 
 export const routes: Routes = [
   { path: 'webshop', component: Home },
@@ -12,7 +13,7 @@ export const routes: Routes = [
   { path: 'contact', component: Contact },
   { path: 'signup', component: Signup },
   { path: 'signin', component: Signin },
-  { path: '', redirectTo: '/webshop', pathMatch: 'full' },
   { path: 'error', component: Error },
+  { path: '', redirectTo: '/webshop', pathMatch: 'full' },
   { path: '**', redirectTo: '/error', pathMatch: 'full' },
 ];
