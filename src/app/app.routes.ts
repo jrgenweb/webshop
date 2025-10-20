@@ -6,9 +6,11 @@ import { Contact } from './webshop/pages/contact/contact';
 import { Signup } from './webshop/pages/signup/signup';
 import { Signin } from './webshop/pages/signin/signin';
 import { Error } from './webshop/error/error';
+import { Cart } from './webshop/cart/cart';
 
 export const routes: Routes = [
   { path: 'webshop', component: Home },
+  { path: 'cart', component: Cart },
   { path: 'about', component: About },
   { path: 'contact', component: Contact },
   { path: 'signup', component: Signup },

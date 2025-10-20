@@ -1,11 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-filter',
-  imports: [],
+  imports: [FormsModule],
   templateUrl: './filter.html',
-  styleUrl: './filter.scss'
+  styleUrl: './filter.scss',
 })
 export class Filter {
+  value!: string;
+  @Output() onChangeEvent = new EventEmitter<string>();
 
+  onKeyUp() {
+    this.onChangeEvent.emit(this.value);
+  }
 }

@@ -1,13 +1,51 @@
 <h2>Termékek</h2>
+{{ searchString }}
+{{ minPrice.value }}
 <div class="row">
   <div class="categories col-md-3">
-    <app-filter></app-filter>
+    <app-filter
+      (onChangeEvent)="productService.searchString = $event"
+    ></app-filter>
+    <div class="d-flex gap-1">
+      <div class="mb-3">
+        <label for="" class="form-label">Min Ár:</label>
+        <input
+          type="number"
+          class="form-control"
+          name=""
+          id=""
+          aria-describedby="helpId"
+          placeholder=""
+          [(ngModel)]="minPrice"
+          #minPrice="ngModel"
+          (keyup)="productService.minPrice = minPrice.value"
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="" class="form-label">Max Ár:</label>
+        <input
+          type="number"
+          class="form-control"
+          name=""
+          id=""
+          aria-describedby="helpId"
+          placeholder=""
+          [(ngModel)]="maxPrice"
+          #maxPrice="ngModel"
+          (keyup)="productService.maxPrice = maxPrice.value"
+        />
+      </div>
+    </div>
+
     <ul class="list-group rounded shadow">
       @for(category of categories;track $index){
 
       <!--<li class="list-group-item active">Active item</li>-->
       <li
         class="list-group-item text-nowrap d-flex align-items-center gap-2 bg-hover-primary"
+        (click)="productService.selectedCategoryId = category.id"
+        [class.active]="productService.selectedCategoryId === category.id"
       >
         <img
           [src]="category.image"
@@ -24,9 +62,9 @@
   </div>
 
   <div class="row col-md-9">
-    @for(product of products;track $index){
+    @for(product of productService.$filteredProducts | async ;track product.id){
 
-    <div class="col-md-3 mb-4">
+    <div class="col-md-4 mb-4">
       <div class="card h-100">
         <div class="ratio ratio-1x1">
           <img
@@ -36,9 +74,12 @@
             (error)="onImageError($event)"
           />
         </div>
-        <div class="card-body">
+        <div class="card-body d-flex flex-column justify-content-between">
           <h4 class="card-title">{{ product.title }}</h4>
           <p class="card-text">{{ product.description }}</p>
+          <h4 class="text-center">
+            {{ product.price | currency : "Ft" : "symbol" : "1.0-0" }}
+          </h4>
         </div>
         <div class="card-footer">
           <div class="mb-3 d-flex gap-1">
@@ -52,11 +93,17 @@
               value="1"
               min="1"
             />
-            <button class="btn btn-primary text-nowrap">Add to Cart</button>
+            <button
+              class="btn btn-primary text-nowrap"
+              (click)="addToCart(product, 1)"
+            >
+              Kosárba
+            </button>
           </div>
         </div>
       </div>
     </div>
     }
+    <h2 class="text-center">Nincsenek megjeleníthető termékek</h2>
   </div>
 </div>
