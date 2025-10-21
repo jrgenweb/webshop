@@ -7,7 +7,7 @@ import { BehaviorSubject, map, Observable, of } from 'rxjs';
   providedIn: 'root',
 })
 export class Product {
-  private _selectedCategoryId?: number;
+  private _selectedCategoryId?: number = 0;
   private _searchString?: string;
   private _minPrice!: number;
   private _maxPrice?: number;
@@ -41,6 +41,10 @@ export class Product {
           return products;
         })
       );
+  }
+
+  getBySlug(slug: string): IProduct {
+    return this.products.find((p) => p.slug === slug) as IProduct;
   }
 
   applyFilter(): void {

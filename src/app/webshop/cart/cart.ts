@@ -3,18 +3,19 @@ import { Product } from '../../shared/services/product';
 import { Cart as CartService } from '../../shared/services/cart';
 import { AsyncPipe, CurrencyPipe, DecimalPipe, NgIf } from '@angular/common';
 import { UnitPipe } from '../../shared/pipes/unit-pipe';
+import { RouterLink } from '@angular/router';
+import { Signin } from '../pages/signin/signin';
+import { Auth } from '../../auth/auth';
 
 @Component({
   selector: 'app-cart',
-  imports: [AsyncPipe, CurrencyPipe, UnitPipe],
+  imports: [AsyncPipe, CurrencyPipe, AsyncPipe, UnitPipe, RouterLink, Signin],
   templateUrl: './cart.html',
   styleUrl: './cart.scss',
 })
 export class Cart implements OnInit {
-  constructor(
-    public cartService: CartService,
-    private productService: Product
-  ) {}
+  isLoggedIn = false;
+  constructor(public cartService: CartService, public authService: Auth) {}
 
   ngOnInit(): void {}
   getCount() {

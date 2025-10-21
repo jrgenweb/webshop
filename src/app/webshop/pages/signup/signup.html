@@ -1,3 +1,6 @@
+<button (click)="this.toastService.show('Minden rendben!', 'bg-success', 3000)">
+  Toast
+</button>
 <div class="col-md-6 offset-3 bg-light p-2 rounded shadow mt-5">
   <form [formGroup]="userForm" (submit)="onSubmit()">
     <h2 class="text-center my-3">Regisztráció</h2>
@@ -125,15 +128,22 @@
       <input
         type="text"
         class="form-control"
+        [class.is-valid]="
+          userForm.get('avatar')?.touched && userForm.get('avatar')?.valid
+        "
+        [class.is-invalid]="
+          userForm.get('avatar')?.touched && userForm.get('avatar')?.invalid
+        "
         name="avatar"
         id="avatar"
         placeholder=""
         aria-describedby="fileHelpId"
+        formControlName="avatar"
       />
       <div id="fileHelpId" class="form-text">
         Csak érvényes kép url elfogadott.
       </div>
-      @if(userForm.get('avatar')?.getError('fileError')){
+      @if(userForm.get('avatar')?.getError('invalidImageUrl')){
       <small class="form-text text-danger">Érvénytelen kép URL</small>
       }
     </div>

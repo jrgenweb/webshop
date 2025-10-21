@@ -1,0 +1,58 @@
+<div class="filter bg-light p-2 rounded-2 shadow">
+  <div class="mb-3">
+    <label for="" class="form-label">Keresés</label>
+    <input
+      type="text"
+      class="form-control"
+      name=""
+      id=""
+      aria-describedby="helpId"
+      placeholder=""
+    />
+  </div>
+</div>
+<div class="d-flex justify-content-end my-5">
+  <button class="btn btn-success">Hozzáadás</button>
+</div>
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead>
+      <th>Azonosító</th>
+      <th>Kép</th>
+      <th>Név</th>
+      <th>Slug</th>
+      <th>Létrehozva</th>
+      <th>Módosítva</th>
+      <th>Műveletek</th>
+    </thead>
+
+    <tbody>
+      @for(category of categories;track $index){
+      <tr class="align-middle">
+        <td>
+          {{ category.id }}
+        </td>
+        <td>
+          <img [src]="category.image" alt="" class="img-responsive" />
+        </td>
+        <td>
+          {{ category.name }}
+        </td>
+        <td>
+          {{ category.slug }}
+        </td>
+        <td>
+          {{ category.creationAt }}
+        </td>
+        <td>
+          {{ category.updatedAt }}
+        </td>
+        <td class="">
+          <button class="btn btn-success me-2">Szerkesztés</button>
+          <button class="btn btn-danger">Törlés</button>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>

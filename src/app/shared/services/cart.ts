@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
 import { IProduct, ICart } from '../interfaces/IProduct';
 import { BehaviorSubject } from 'rxjs';
+import { ToastService } from './toast';
 
 @Injectable({
   providedIn: 'root',
 })
 export class Cart {
   $cart = new BehaviorSubject<ICart[]>([]);
+
+  constructor(private toastService: ToastService) {}
 
   add(product: IProduct, amount: number) {
     const currentCart = this.$cart.value; // az aktuális kosár tartalma
@@ -34,6 +37,7 @@ export class Cart {
           productId: product.id,
           productName: product.title,
           productImg: product.images[0],
+          slug: product.slug,
           amount,
           price: product.price,
           priceWithTax: product.price,
@@ -42,6 +46,11 @@ export class Cart {
       ];
       this.$cart.next(updatedCart);
     }
+    this.toastService.show(
+      'Sikeresen hozzáadtad a terméket!',
+      'bg-primary',
+      3000
+    );
   }
 
   remove(productId: number) {
@@ -49,6 +58,11 @@ export class Cart {
       (cart) => cart.productId !== productId
     );
     this.$cart.next(updatedCart);
+    this.toastService.show(
+      'Sikeresen törölted a terméket a kosárból!',
+      'bg-danger',
+      3000
+    );
   }
 
   clear() {

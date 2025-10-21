@@ -1,1 +1,40 @@
-<p>product-details works!</p>
+<button class="btn btn-link" routerLink="/webshop">Vissza</button>
+<div class="col-md-8 offset-2 mt-5">
+  <div class="product-gallery row">
+    <div class="main col-md-10">
+      <img
+        [src]="product.images[0]"
+        [alt]="product.title"
+        class="img-thumbnail"
+      />
+    </div>
+    <div class="images col-md-2">
+      @for (image of product.images; track $index) {
+      <img [src]="image" [alt]="product.title" class="img-thumbnail" />
+      }
+    </div>
+  </div>
+  <h2 class="my-3">{{ product.title }}</h2>
+  <div class="d-flex gap-2 align-items-center justify-content-end mb-3">
+    <h2>{{ product.price | currency : "Ft" }}</h2>
+    <div class="">
+      <input
+        type="number"
+        class="form-control"
+        name=""
+        id=""
+        aria-describedby="helpId"
+        placeholder=""
+        [(ngModel)]="amount"
+      />
+    </div>
+    <button class="btn btn-primary" (click)="cartService.add(product, amount)">
+      Kosárba
+    </button>
+  </div>
+  <div class="">
+    <p class="">
+      {{ product.description }}
+    </p>
+  </div>
+</div>

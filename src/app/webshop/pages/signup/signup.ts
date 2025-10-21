@@ -1,84 +1,76 @@
 import { Component } from '@angular/core';
 import {
-  AbstractControl,
-  AsyncValidatorFn,
   FormControl,
   FormGroup,
   ReactiveFormsModule,
-  ValidationErrors,
-  ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { passwordMatchValidator } from '../../../shared/validators/password-match.validator';
+import { passwordPatternValidator } from '../../../shared/validators/password-pattern.validator';
+import { isValidImage } from '../../../shared/validators/is-valid-image.validator';
+import { IUser } from '../../../shared/interfaces/IProduct';
+import { Auth } from '../../../auth/auth';
+import { Toast } from '../../../toast/toast';
+import { ToastService } from '../../../shared/services/toast';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-signup',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, Toast],
   templateUrl: './signup.html',
   styleUrl: './signup.scss',
 })
 export class Signup {
   userForm!: FormGroup;
-  constructor() {
+  constructor(
+    private authService: Auth,
+    public toastService: ToastService,
+    private route: Router
+  ) {
     this.userForm = new FormGroup(
       {
         lastname: new FormControl('', [Validators.required]),
         firstname: new FormControl('', [Validators.required]),
         email: new FormControl('', [Validators.required, Validators.email]),
-        password: new FormControl('', [
+        password: new FormControl('1234', [
           Validators.required,
-          this.passwordPatternValidator(),
+          passwordPatternValidator(),
         ]),
-        password2: new FormControl('', [
+        password2: new FormControl('1234', [
           Validators.required,
-          this.passwordPatternValidator(),
+          passwordPatternValidator(),
         ]),
-        avatar: new FormControl('', []),
+        avatar: new FormControl(
+          'https://mkt.cdnpk.net/web-app/media/freepik-20-2000.webp',
+          [],
+          [isValidImage()]
+        ),
       },
-      { validators: this.passwordMatchValidator('password', 'password2') }
+      { validators: passwordMatchValidator('password', 'password2') }
     );
   }
 
   onSubmit() {
     this.userForm.markAllAsTouched();
-    console.log(this.userForm);
-  }
+    if (this.userForm.valid) {
+      const formData = this.userForm.value;
+      let user: IUser = {
+        name: formData.firstname + ' ' + formData.lastname,
+        email: formData.email,
+        password: formData.password,
+        avatar: formData?.avatar,
+      };
 
-  //equalValidation(control: FormControl): ValidationErrors {}
-
-  /*
-  checkEmailAvailablity():AsyncValidatorFn{
-    return (control:AbstractControl):ValidationErrors | null =>{
-      const value = control.value;
-
-
-
+      this.authService.register(user).subscribe({
+        next: (response) => {
+          this.toastService.show('Sikeres regisztráció', 'bg-success', 3000);
+          this.route.navigate(['/signin']);
+        },
+        error: (err) => {
+          this.toastService.show('Sikertelen regisztráció', 'bg-danger', 3000);
+          console.error(err);
+        },
+      });
     }
-  }*/
-  passwordPatternValidator(): ValidatorFn {
-    const regex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&\-_])[A-Za-z\d@$!%*?&\-_]{8,16}$/;
-    return (control: AbstractControl): ValidationErrors | null => {
-      const value = control.value;
-      if (value == null || value === '') return null; // üres mezőt ne dobjon pattern hibára itt (use required külön)
-      return regex.test(value) ? null : { passwordPattern: true };
-    };
-  }
-
-  passwordMatchValidator(
-    passwordKey = 'password',
-    confirmKey = 'confirmPassword'
-  ) {
-    return (group: AbstractControl): ValidationErrors | null => {
-      const formGroup = group as FormGroup;
-      const pwd = formGroup.controls[passwordKey];
-      const cpwd = formGroup.controls[confirmKey];
-      if (!pwd || !cpwd) return null;
-
-      // ha egyik mező még üres, ne jelentsünk mismatch-et itt (kivéve ha explicit akarod)
-      if (cpwd.pristine) return null;
-
-      const mismatch = pwd.value !== cpwd.value;
-      return mismatch ? { passwordMismatch: true } : null;
-    };
   }
 }

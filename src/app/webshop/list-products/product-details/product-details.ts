@@ -1,11 +1,28 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Product } from '../../../shared/services/product';
+import { IProduct } from '../../../shared/interfaces/IProduct';
+import { CurrencyPipe } from '@angular/common';
+import { Cart } from '../../../shared/services/cart';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-product-details',
-  imports: [],
+  imports: [RouterLink, CurrencyPipe, FormsModule],
   templateUrl: './product-details.html',
-  styleUrl: './product-details.scss'
+  styleUrl: './product-details.scss',
 })
-export class ProductDetails {
+export class ProductDetails implements OnInit {
+  product!: IProduct;
+  amount: number = 1;
+  constructor(
+    private route: ActivatedRoute,
+    private productService: Product,
+    public cartService: Cart
+  ) {}
 
+  ngOnInit(): void {
+    const slug = this.route.snapshot.paramMap.get('slug') as string;
+    this.product = this.productService.getBySlug(slug);
+  }
 }

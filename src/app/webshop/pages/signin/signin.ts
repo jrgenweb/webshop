@@ -1,11 +1,17 @@
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { Auth } from '../../../auth/auth';
 
 @Component({
   selector: 'app-signin',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './signin.html',
-  styleUrl: './signin.scss'
+  styleUrl: './signin.scss',
 })
 export class Signin {
+  constructor(private authService: Auth) {}
 
+  login() {
+    this.authService.login();
+  }
 }

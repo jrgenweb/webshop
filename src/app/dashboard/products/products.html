@@ -1,0 +1,26 @@
+<p>dashboard/termékek</p>
+
+<!-- Nav tabs -->
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a
+      class="nav-link"
+      routerLink="/dashboard/products"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      Termékek
+    </a>
+  </li>
+  <li class="nav-item">
+    <a
+      class="nav-link"
+      routerLink="/dashboard/products/categories"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      Kategóriák
+    </a>
+  </li>
+</ul>
+<router-outlet></router-outlet>

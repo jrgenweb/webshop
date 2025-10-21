@@ -1,5 +1,5 @@
+@let cart = (cartService.$cart | async); @if(cart && cart.length>0){
 <h2 class="my-5">Kosár tartalma</h2>
-
 <div class="table-responsive">
   <table class="table table-hover table- table-striped">
     <thead></thead>
@@ -16,7 +16,15 @@
             style="width: 50px; aspect-ratio: 1"
           />
         </td>
-        <td>{{ c.productName }}</td>
+        <td>
+          <a
+            href="#"
+            class="btn btn-link"
+            [routerLink]="'/webshop/product/' + c.slug"
+          >
+            {{ c.productName }}
+          </a>
+        </td>
 
         <td>{{ c.priceWithTax | currency : "Ft" : "symbol" : "1.0-0" }}</td>
         <td>{{ c.amount | unit : "db" }}</td>
@@ -45,6 +53,18 @@
       </tr>
     </tfoot>
   </table>
-
+  @if(authService.isLoggedIn()){
   <button class="btn btn-primary float-end">Folytatás</button>
+  }@else {
+  <h3 class="text-center mt-5">A megrendeléshez bekell jelentkezni!</h3>
+  <div class="py-5">
+    <app-signin></app-signin>
+  </div>
+  }
 </div>
+}@else {
+<div class="text-center">
+  <h3 class="text-center m-5">A kosár tartalma üres</h3>
+  <a class="btn btn-link" routerLink="/webshop">Vissza a termékekhez</a>
+</div>
+}

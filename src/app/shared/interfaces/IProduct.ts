@@ -2,10 +2,19 @@ export interface ICart {
   productId: number;
   productName: string;
   productImg: string;
+  slug: string;
   amount: number;
   price: number;
   priceWithTax: number;
+
   sum: number;
+}
+
+export interface IUser {
+  name: string;
+  email: string;
+  password: string;
+  avatar?: string;
 }
 
 export interface ICategory {

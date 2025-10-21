@@ -1,0 +1,93 @@
+<!-- Sidebar toggle button mobilon -->
+<button
+  class="btn btn-primary d-lg-none mb-2"
+  type="button"
+  data-bs-toggle="collapse"
+  data-bs-target="#sidebarNav"
+>
+  ☰ Menu
+</button>
+
+<div class="d-flex gap-2">
+  <!-- Sidebar -->
+  <nav
+    class="collapse d-lg-block bg-light flex-column p-3"
+    id="sidebarNav"
+    style="width: 250px; min-height: 100vh"
+  >
+    <a class="navbar-brand mb-3" routerLink="/">Dashboard</a>
+
+    <ul class="nav nav-pills flex-column mb-auto">
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          routerLink="/dashboard/summary"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          Statisztika
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          routerLink="/dashboard/orders"
+          routerLinkActive="active"
+          >Megrendelések</a
+        >
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          routerLink="/dashboard/products"
+          routerLinkActive="active"
+          >Termékek</a
+        >
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          routerLink="/dashboard/users"
+          routerLinkActive="active"
+          >Felhasználok</a
+        >
+      </li>
+    </ul>
+
+    <hr />
+    <button class="btn btn-success w-100" routerLink="/">WEBSHOP</button>
+
+    <hr />
+    <div class="dropdown">
+      <a
+        href="#"
+        class="d-flex align-items-center text-decoration-none dropdown-toggle justify-content-center"
+        id="dropdownUser"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        <img
+          [src]="authService.user.avatar"
+          alt=""
+          width="32"
+          height="32"
+          class="rounded-circle me-2"
+        />
+        <strong>{{ authService.user.name }}</strong>
+      </a>
+      <ul
+        class="dropdown-menu text-small shadow"
+        aria-labelledby="dropdownUser"
+      >
+        <li><a class="dropdown-item" href="#">Settings</a></li>
+        <li><a class="dropdown-item" href="#">Sign out</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Main content -->
+  <main class="flex-fill p-3">
+    <router-outlet></router-outlet>
+  </main>
+</div>
+<app-toast></app-toast>

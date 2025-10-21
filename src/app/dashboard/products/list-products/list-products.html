@@ -1,0 +1,119 @@
+{{ selectedCategory }}
+<div class="filter row bg-light p-2 rounded-2 shadow">
+  <div class="col-6">
+    <label for="" class="form-label">Keresés</label>
+    <input
+      type="text"
+      class="form-control"
+      name=""
+      id=""
+      aria-describedby="helpId"
+      placeholder=""
+      #searchStringModel
+      (keyup)="productService.searchString = searchStringModel.value"
+    />
+  </div>
+
+  <div class="col-6">
+    <label for="" class="form-label">Kategória kiválasztása</label>
+    <select
+      class="form-select form-select-lg"
+      name=""
+      id=""
+      [(ngModel)]="selectedCategory"
+      (change)="onChangeCategory(selectedCategory)"
+    >
+      <option value="0" selected>Összes</option>
+      @for(category of categories;track $index){
+      <option [ngValue]="category.id">{{ category.name }}</option>
+      }
+    </select>
+  </div>
+  <div class="col-6 row">
+    <div class="col-6">
+      <label for="" class="form-label">Min ár</label>
+      <input
+        type="number"
+        class="form-control"
+        name=""
+        id=""
+        aria-describedby="helpId"
+        placeholder=""
+        [(ngModel)]="minPriceModel"
+        #minPriceModel="ngModel"
+        (keyup)="productService.minPrice = minPriceModel.value"
+      />
+    </div>
+    <div class="col-6">
+      <label for="" class="form-label">Max ár</label>
+      <input
+        type="number"
+        class="form-control"
+        name=""
+        id=""
+        aria-describedby="helpId"
+        placeholder=""
+        [(ngModel)]="maxPriceModel"
+        #maxPriceModel="ngModel"
+        (keyup)="productService.maxPrice = maxPriceModel.value"
+      />
+    </div>
+  </div>
+  <div class="col-6 d-flex align-items-center justify-content-center">
+    <button class="btn btn-success">Szűrés</button>
+  </div>
+</div>
+<div class="d-flex justify-content-end">
+  <button class="btn btn-success my-5">Hozzáadás</button>
+</div>
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Azonosító</th>
+        <th>Kép</th>
+        <th>Név</th>
+        <th>Ár</th>
+        <th>Kategória</th>
+        <th>Létrehozva</th>
+        <th>Módosítva</th>
+        <th>Műveletek</th>
+      </tr>
+    </thead>
+    <tbody>
+      @let products = (productService.$filteredProducts | async); @for(product
+      of products;track $index){
+      <tr class="align-middle">
+        <td>
+          {{ product.id }}
+        </td>
+        <td>
+          <img
+            [src]="product.images[0]"
+            alt=""
+            class="img-thumbnail rounded-circle"
+          />
+        </td>
+        <td>
+          {{ product.title }}
+        </td>
+        <td>
+          {{ product.price | currency : "Ft" }}
+        </td>
+        <td>{{ product.category.name }}</td>
+        <td>
+          {{ product.creationAt }}
+        </td>
+        <td>
+          {{ product.updatedAt }}
+        </td>
+        <td>
+          <button class="btn btn-success me-2">Szerkesztés</button>
+          <button class="btn btn-danger">Törlés</button>
+        </td>
+      </tr>
+
+      }
+    </tbody>
+  </table>
+</div>
