@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IProduct } from '../interfaces/IProduct';
-import { BehaviorSubject, map, Observable, of } from 'rxjs';
+import { BehaviorSubject, map, Observable, of, take, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -24,9 +24,9 @@ export class Product {
     });
   }
 
-  private getAll(): Observable<IProduct[]> {
-    const products = sessionStorage.getItem('products');
-    if (products) return of(JSON.parse(products)) as Observable<IProduct[]>;
+  public getAll(): Observable<IProduct[]> {
+    //const products = sessionStorage.getItem('products');
+    //if (products) return of(JSON.parse(products)) as Observable<IProduct[]>;
     return this.http
       .get<IProduct[]>('https://api.escuelajs.co/api/v1/products')
       .pipe(
@@ -71,6 +71,45 @@ export class Product {
       });
       this.$filteredProducts.next(filteredProducts);
     }
+  }
+  clearFilter(): void {
+    this.searchString = '';
+    this.maxPrice = 0;
+    this.minPrice = 0;
+    this.selectedCategoryId = 0;
+  }
+
+  add(product: IProduct) {
+    const body = product;
+    return this.http
+      .post('https://api.escuelajs.co/api/v1/products/', body)
+      .pipe(
+        tap(() => {
+          this.getAll().subscribe(() => this.applyFilter());
+        })
+      );
+  }
+  update(product: IProduct) {
+    const { id, ...body } = product;
+
+    return this.http
+      .put('https://api.escuelajs.co/api/v1/products/' + product.id, body)
+      .pipe(
+        tap(() => {
+          this.getAll().subscribe(() => this.applyFilter()); //this.applyFilter();
+        })
+      );
+  }
+  delete(product: IProduct) {
+    return this.http
+      .delete('https://api.escuelajs.co/api/v1/products/' + product.id)
+      .pipe(
+        tap(() => {
+          this.getAll().subscribe(() => {
+            this.applyFilter();
+          });
+        })
+      );
   }
 
   get minPrice(): number | undefined {

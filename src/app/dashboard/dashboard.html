@@ -1,61 +1,70 @@
 <!-- Sidebar toggle button mobilon -->
-<button
-  class="btn btn-primary d-lg-none mb-2"
-  type="button"
-  data-bs-toggle="collapse"
-  data-bs-target="#sidebarNav"
->
-  ☰ Menu
-</button>
 
 <div class="d-flex gap-2">
   <!-- Sidebar -->
   <nav
-    class="collapse d-lg-block bg-light flex-column p-3"
+    class="collapse d-flex bg-light flex-lg-column p-2 sidebar"
     id="sidebarNav"
-    style="width: 250px; min-height: 100vh"
   >
-    <a class="navbar-brand mb-3" routerLink="/">Dashboard</a>
+    <div class="text-center mb-2">
+      <a
+        class="navbar-brand text-uppercase font-monospace fs-4 d-none d-sm-none d-md-none d-lg-block"
+        routerLink="/"
+        >Dashboard</a
+      >
+    </div>
 
-    <ul class="nav nav-pills flex-column mb-auto">
+    <ul class="nav nav-pills flex-lg-column flex-row mb-auto text-nowrap gap-2">
       <li class="nav-item">
         <a
-          class="nav-link"
+          class="nav-link p-1 p-sm-1 p-md-2"
           routerLink="/dashboard/summary"
           routerLinkActive="active"
           [routerLinkActiveOptions]="{ exact: true }"
         >
-          Statisztika
+          <i class="bi bi-bar-chart-fill me-1"></i>
+          <span class="d-md-none d-sm-none d-none d-lg-inline"
+            >Statisztika</span
+          >
         </a>
       </li>
       <li class="nav-item">
         <a
-          class="nav-link"
+          class="nav-link p-1 p-sm-1 p-md-2"
           routerLink="/dashboard/orders"
           routerLinkActive="active"
-          >Megrendelések</a
+          ><i class="bi bi-basket-fill me-1"></i
+          ><span class="d-md-none d-sm-none d-none d-lg-inline"
+            >Megrendelések</span
+          ></a
         >
       </li>
       <li class="nav-item">
         <a
-          class="nav-link"
+          class="nav-link p-1 p-sm-1 p-md-2"
           routerLink="/dashboard/products"
           routerLinkActive="active"
-          >Termékek</a
+          ><i class="bi bi-cart-fill me-1"></i
+          ><span class="d-md-none d-sm-none d-none d-lg-inline"
+            >Termékek</span
+          ></a
         >
       </li>
       <li class="nav-item">
         <a
-          class="nav-link"
+          class="nav-link p-1 p-sm-1 p-md-2"
           routerLink="/dashboard/users"
           routerLinkActive="active"
-          >Felhasználok</a
+          ><i class="bi bi-people-fill me-1"></i
+          ><span class="d-md-none d-sm-none d-none d-lg-inline"
+            >Felhasználók</span
+          ></a
         >
       </li>
     </ul>
 
     <hr />
-    <button class="btn btn-success w-100" routerLink="/">WEBSHOP</button>
+    <button class="btn btn-success" routerLink="/">WEBSHOP</button>
 
     <hr />
     <div class="dropdown">
@@ -73,7 +82,9 @@
           height="32"
           class="rounded-circle me-2"
         />
-        <strong>{{ authService.user.name }}</strong>
+        <span class="d-none d-md-block d-lg-block">
+          <strong>{{ authService.user.name }}</strong>
+        </span>
       </a>
       <ul
         class="dropdown-menu text-small shadow"

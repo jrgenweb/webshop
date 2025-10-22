@@ -1,0 +1,26 @@
+.sidebar {
+    height: 100vh;
+}
+main {
+    overflow-y: auto;
+    max-height: 100vh;
+}
+
+@media screen and (max-width: 992px) {
+    .sidebar {
+        background-color: red;
+        position: fixed;
+        bottom: 0;
+        max-height: unset;
+        height: unset;
+        z-index: 100;
+        width: 100vw;
+        align-items: center;
+        justify-content: space-between;
+        align-items: center;
+        ul {
+            align-items: center;
+            flex-direction: row !important;
+        }
+    }
+}

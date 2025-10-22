@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Navbar } from './webshop/navbar/navbar';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+
 import { Toast } from './toast/toast';
 
 @Component({
