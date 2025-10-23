@@ -11,10 +11,12 @@ export interface ICart {
 }
 
 export interface IUser {
+  id?: number;
   name: string;
   email: string;
   password: string;
   avatar?: string;
+  role?: string;
 }
 
 export interface ICategory {
