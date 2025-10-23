@@ -1,10 +1,9 @@
 import { Injectable, signal } from '@angular/core';
-
 import { combineLatest, map } from 'rxjs';
 import { Product } from './product';
 import { Category } from './category';
 import { User } from './user';
-import { ICategory } from '../interfaces/IProduct';
+import { ICategory, IUser } from '../interfaces/IProduct';
 
 @Injectable({
   providedIn: 'root',
@@ -51,11 +50,10 @@ export class SummaryService {
               return { name: c.name, avg };
             }
           );
-
           return {
             totalProducts: products.length,
-            totalCategories: 1, //categories.length,
-            totalUsers: 1, //users.length,
+            totalCategories: (categories as Array<ICategory>).length,
+            totalUsers: (users as Array<IUser>).length,
             avgPriceByCategory,
             productCountByCategory,
           };
