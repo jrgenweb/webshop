@@ -1,0 +1,27 @@
+<div
+  class="product-gallery d-flex gap-2 flex-column-reverse flex-md-column-reverse flex-lg-row"
+>
+  <!-- Fő kép -->
+  <div class="main flex-fill text-center">
+    <img
+      [src]="selectedImage || images[0] | fallbackImage"
+      [alt]="title"
+      class="img-fluid rounded shadow"
+    />
+  </div>
+
+  <!-- Kis képek -->
+  <div
+    class="images d-flex gap-2 flex-row flex-lg-column justify-content-start"
+  >
+    @for (image of images; track $index) {
+    <img
+      [src]="image | fallbackImage"
+      [alt]="title"
+      class="img-thumbnail rounded shadow-sm thumb"
+      [class.active]="image === selectedImage"
+      (click)="showImage(image)"
+    />
+    }
+  </div>
+</div>

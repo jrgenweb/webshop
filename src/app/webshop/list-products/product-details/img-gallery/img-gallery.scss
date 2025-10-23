@@ -1,0 +1,72 @@
+.product-gallery {
+    height: unset;
+}
+.images {
+    display: flex; /* már flex, ok */
+    flex-direction: row; /* vízszintes alap */
+    gap: 0.5rem;
+    overflow-x: auto; /* vízszintes scroll */
+    overflow-y: hidden;
+    max-height: 220px; /* kis magasság scrollhoz */
+    padding: 1rem;
+    align-items: center;
+    justify-content: flex-start; /* ⬅ középre ne, hanem balra */
+}
+
+.images::-webkit-scrollbar {
+    height: 4px;
+    width: 4px;
+}
+.images::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+/* Nagy kijelzőn függőleges scroll */
+@media (min-width: 992px) {
+    .product-gallery {
+        height: 60vh;
+    }
+    .thumb {
+        width: 150px;
+        height: 150px;
+    }
+    .images {
+        flex-direction: column;
+        max-height: 100%; /* fő kép magassága szerint */
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+}
+
+.thumb {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0; /* ne zsugorodjon */
+    transition: transform 0.2s ease;
+    margin-right: 0.5rem; /* kis gap vízszintes scrollhoz */
+}
+
+.thumb:hover {
+    transform: scale(1.05);
+}
+
+.thumb.active {
+    border: 2px solid black;
+    box-shadow: 0 0 5px black;
+
+    /*position: relative;
+    &::after {
+        content: "";
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+    }*/
+}

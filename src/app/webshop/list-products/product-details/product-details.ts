@@ -5,10 +5,11 @@ import { IProduct } from '../../../shared/interfaces/IProduct';
 import { CurrencyPipe } from '@angular/common';
 import { Cart } from '../../../shared/services/cart';
 import { FormsModule } from '@angular/forms';
+import { ImgGallery } from './img-gallery/img-gallery';
 
 @Component({
   selector: 'app-product-details',
-  imports: [RouterLink, CurrencyPipe, FormsModule],
+  imports: [RouterLink, CurrencyPipe, FormsModule, ImgGallery],
   templateUrl: './product-details.html',
   styleUrl: './product-details.scss',
 })

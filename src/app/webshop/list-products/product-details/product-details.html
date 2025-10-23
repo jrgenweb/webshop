@@ -1,6 +1,10 @@
 <button class="btn btn-link" routerLink="/webshop">Vissza</button>
-<div class="col-md-8 offset-2 mt-5">
-  <div class="product-gallery row">
+<div class="col-xl-8 offset-xl-2 mt-5 col-sm-12 offset-sm-0">
+  <app-img-gallery
+    [images]="product.images"
+    [title]="product.title"
+  ></app-img-gallery>
+  <!-- <div class="product-gallery row">
     <div class="main col-md-10">
       <img
         [src]="product.images[0]"
@@ -13,7 +17,7 @@
       <img [src]="image" [alt]="product.title" class="img-thumbnail" />
       }
     </div>
-  </div>
+  </div> -->
   <h2 class="my-3">{{ product.title }}</h2>
   <div class="d-flex gap-2 align-items-center justify-content-end mb-3">
     <h2>{{ product.price | currency : "Ft" }}</h2>
