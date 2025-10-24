@@ -1,1 +1,166 @@
-<p>orders works!</p>
+<form
+  class="filter"
+  #orderFilterForm="ngForm"
+  (reset)="orderService.clearFilter()"
+  class="filter row bg-light p-2 rounded-2 shadow"
+>
+  <div class="col-6">
+    <div class="mb-3">
+      <label for="searchString" class="form-label">Keresés</label>
+      <input
+        type="text"
+        class="form-control form-control-lg"
+        name="searchString"
+        id="searchString"
+        aria-describedby="helpId"
+        placeholder=""
+        #searchString
+        (keyup)="orderService.searchString = searchString.value"
+      />
+      <small id="helpId" class="form-text text-muted">Help text</small>
+    </div>
+  </div>
+  <div class="col-6 row">
+    <div class="col-6">
+      <div class="mb-3">
+        <label for="minPrice" class="form-label">Min Ár:</label>
+        <input
+          type="number"
+          class="form-control-sm form-control"
+          name="minPrice"
+          id="minPrice"
+          placeholder=""
+          [(ngModel)]="minPrice"
+          #minPrice="ngModel"
+          (keyup)="orderService.minPrice = minPrice.value"
+        />
+      </div>
+    </div>
+    <div class="col-6">
+      <div class="mb-3">
+        <label for="maxPrice" class="form-label">Max Ár:</label>
+        <input
+          type="number"
+          class="form-control-sm form-control"
+          name="maxPrice"
+          id="maxPrice"
+          placeholder=""
+          [(ngModel)]="maxPrice"
+          #maxPrice="ngModel"
+          (keyup)="orderService.maxPrice = maxPrice.value"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="col-6 row">
+    <div class="col-6">
+      <div class="mb-3">
+        <label for="minDate" class="form-label">Dátum:</label>
+        <input
+          type="date"
+          class="form-control form-control-sm"
+          name="minDate"
+          id="minDate"
+          aria-describedby="helpId"
+          placeholder=""
+          [(ngModel)]="minDate"
+          #minDate
+          (change)="orderService.minDate = minDate.value"
+        />
+        <small id="helpId" class="form-text text-muted">Help text</small>
+      </div>
+    </div>
+    <div class="col-6">
+      <div class="mb-3">
+        <label for="maxDate" class="form-label">Dátum:</label>
+        <input
+          type="date"
+          class="form-control form-control-sm"
+          name="maxDate"
+          id="maxDate"
+          aria-describedby="helpId"
+          placeholder=""
+          [(ngModel)]="maxDate"
+          #maxDate
+          (change)="orderService.maxDate = maxDate.value"
+        />
+        <small id="helpId" class="form-text text-muted">Help text</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-6">
+    <div class="mb-3">
+      <label for="status" class="form-label">Státusz</label>
+      <select
+        class="form-select form-select-sm"
+        name="status"
+        id="status"
+        [(ngModel)]="status"
+        (change)="onStatusChange()"
+      >
+        <option selected value="">Összes</option>
+        <option value="pending">Pending</option>
+        <option value="delivered">Delivered</option>
+        <option value="shipped">Shipped</option>
+      </select>
+    </div>
+  </div>
+  <div class="col-6 offset-6 d-flex justify-content-end">
+    <button class="btn btn-danger me-2" type="reset">Törlés</button>
+    <button class="btn btn-success" type="submit">Szűrés</button>
+  </div>
+</form>
+
+<div class="table-responsive mt-5">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Azonosító</th>
+        <th>Felhasználó</th>
+        <th class="text-end">Összeg</th>
+        <th>Dátum</th>
+        <th>Státusz</th>
+        <th>Műveletek</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for(order of orderService.$filteredOrders | async;track order.id){
+      <tr class="align-middle">
+        <td class="text-center">{{ order.id }}</td>
+        <td>
+          <img
+            [src]="order.user.avatar || '' | fallbackImage"
+            alt=""
+            class="img-thumbnail rounded-circle"
+          />
+          {{ order.user.name | shorten : 30 }}
+        </td>
+        <td class="text-end">{{ order.total | currency : "Ft" }}</td>
+        <td>{{ order.createdAt | date : "fullDate" }}</td>
+        <td>
+          @if(order.status==='pending'){
+          <span class="badge rounded-pill bg-light text-dark">{{
+            order.status
+          }}</span>
+          } @else if(order.status==='shipped'){
+          <span class="badge rounded-pill bg-primary">{{ order.status }}</span>
+          } @else{
+          <span class="badge rounded-pill bg-success">{{ order.status }}</span>
+          }
+        </td>
+        <td>
+          <button
+            class="btn btn-success me-2"
+            [class.disabled]="order.status !== 'pending'"
+          >
+            Szerkesztés
+          </button>
+          <button class="btn btn-danger">Törlés</button>
+        </td>
+      </tr>
+
+      }
+    </tbody>
+  </table>
+</div>
