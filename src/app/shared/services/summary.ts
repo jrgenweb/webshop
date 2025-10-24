@@ -3,7 +3,7 @@ import { combineLatest, map } from 'rxjs';
 import { Product } from './product';
 import { Category } from './category';
 import { User } from './user';
-import { ICategory, IUser } from '../interfaces/IProduct';
+import { ICategory, IUser, IProduct } from '../interfaces/IProduct';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +15,7 @@ export class SummaryService {
     totalUsers: 0,
     avgPriceByCategory: [] as { name: string; avg: number }[],
     productCountByCategory: [] as { name: string; count: number }[],
+    newestProducts: [] as IProduct[],
   });
 
   constructor(
@@ -50,12 +51,23 @@ export class SummaryService {
               return { name: c.name, avg };
             }
           );
+
+          const newestProducts = products
+            .sort((a, b) => {
+              return (
+                new Date(b.updatedAt).getTime() -
+                new Date(a.updatedAt).getTime()
+              );
+            })
+            .slice(0, 10);
+
           return {
             totalProducts: products.length,
             totalCategories: (categories as Array<ICategory>).length,
             totalUsers: (users as Array<IUser>).length,
             avgPriceByCategory,
             productCountByCategory,
+            newestProducts,
           };
         })
       )
