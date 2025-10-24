@@ -4,6 +4,7 @@ import { Product } from './product';
 import { Category } from './category';
 import { User } from './user';
 import { ICategory, IUser, IProduct } from '../interfaces/IProduct';
+import { Order } from './order';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +14,7 @@ export class SummaryService {
     totalProducts: 0,
     totalCategories: 0,
     totalUsers: 0,
+    totalOrders: 0,
     avgPriceByCategory: [] as { name: string; avg: number }[],
     productCountByCategory: [] as { name: string; count: number }[],
     newestProducts: [] as IProduct[],
@@ -21,7 +23,8 @@ export class SummaryService {
   constructor(
     private productService: Product,
     private categoryService: Category,
-    private userService: User
+    private userService: User,
+    private orderService: Order
   ) {}
 
   /** 🔄 Lekéri az összes szükséges adatot és frissíti a summary-t */
@@ -30,9 +33,10 @@ export class SummaryService {
       this.productService.getAll(),
       this.categoryService.getAll(),
       this.userService.getAll(),
+      this.orderService.getAll(),
     ])
       .pipe(
-        map(([products, categories, users]) => {
+        map(([products, categories, users, orders]) => {
           // 🔹 Termékszám kategóriánként
           const productCountByCategory = (categories as Array<ICategory>).map(
             (c: any) => ({
@@ -65,6 +69,7 @@ export class SummaryService {
             totalProducts: products.length,
             totalCategories: (categories as Array<ICategory>).length,
             totalUsers: (users as Array<IUser>).length,
+            totalOrders: orders.length,
             avgPriceByCategory,
             productCountByCategory,
             newestProducts,
