@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import { IProduct } from '../interfaces/IProduct';
 import { BehaviorSubject, map, Observable, of, take, tap } from 'rxjs';
 
@@ -11,8 +11,9 @@ export class Product {
   private _searchString?: string;
   private _minPrice!: number;
   private _maxPrice?: number;
-
   private products!: IProduct[];
+
+  isLoading = signal<boolean>(false);
 
   $filteredProducts = new BehaviorSubject<IProduct[]>([]);
 
@@ -20,13 +21,16 @@ export class Product {
     this.getAll().subscribe({
       next: (response) => {
         this.products = response;
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        this.isLoading.set(false);
       },
     });
   }
 
   public getAll(): Observable<IProduct[]> {
-    //const products = sessionStorage.getItem('products');
-    //if (products) return of(JSON.parse(products)) as Observable<IProduct[]>;
+    this.isLoading.set(true);
     return this.http
       .get<IProduct[]>('https://api.escuelajs.co/api/v1/products')
       .pipe(
@@ -124,8 +128,6 @@ export class Product {
   }
   set maxPrice(value: number) {
     this._maxPrice = value;
-    console.log('from servicess');
-    console.log(this.$filteredProducts.value);
     this.applyFilter();
   }
 

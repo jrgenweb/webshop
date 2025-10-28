@@ -18,7 +18,6 @@ import { ProductCard } from './product-card/product-card';
 export class ListProducts implements OnInit {
   categories!: ICategory[];
   amount: number = 1;
-
   isFilterCollapsed = true;
 
   constructor(
@@ -28,6 +27,9 @@ export class ListProducts implements OnInit {
   ) {}
   ngOnInit(): void {
     this.productService.applyFilter();
+    this.productService.$filteredProducts.subscribe({
+      next: (products) => {},
+    });
 
     this.categoryService.getAll().subscribe({
       next: (response) => {

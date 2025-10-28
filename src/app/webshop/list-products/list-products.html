@@ -1,5 +1,5 @@
 <h2>Termékek</h2>
-@let products = (productService.$filteredProducts | async);
+
 <div class="row">
   @if(isFilterCollapsed){
   <div class="filter col-xl-auto col-lg-auto col-md-6" style="min-width: 250px">
@@ -94,14 +94,19 @@
 
   <div class="col-xl col-lg col-md-6">
     <div class="row">
-      @if(products && products.length>0){ @for(product of products ;track
-      product.id){
+      @let products = (productService.$filteredProducts | async);
+      @if(productService.isLoading()){
+      <!-- Loading component -->>
+      <h1>Loading</h1>
+
+      }@else{ @if(products && products.length>0){ @for(product of products
+      ;track product.id){
       <div class="col-xl-4 col-lg-6 col-md-12 col-12 mb-4">
         <app-product-card [product]="product"></app-product-card>
       </div>
       } }@else {
       <h2 class="text-center">Nincsenek megjeleníthető termékek</h2>
-      }
+      } }
     </div>
   </div>
 </div>
