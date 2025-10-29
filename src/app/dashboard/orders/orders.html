@@ -4,163 +4,156 @@
   (reset)="orderService.clearFilter()"
   class="filter row bg-light p-2 rounded-2 shadow"
 >
-  <div class="col-6">
-    <div class="mb-3">
-      <label for="searchString" class="form-label">Keresés</label>
+  <div class="flex-group">
+    <mat-form-field class="full-width">
+      <mat-label>Keresés</mat-label>
       <input
         type="text"
-        class="form-control form-control-lg"
+        matInput
         name="searchString"
-        id="searchString"
-        aria-describedby="helpId"
-        placeholder=""
         #searchString
         (keyup)="orderService.searchString = searchString.value"
       />
-      <small id="helpId" class="form-text text-muted">Help text</small>
-    </div>
-  </div>
-  <div class="col-6 row">
-    <div class="col-6">
-      <div class="mb-3">
-        <label for="minPrice" class="form-label">Min Ár:</label>
-        <input
-          type="number"
-          class="form-control-sm form-control"
-          name="minPrice"
-          id="minPrice"
-          placeholder=""
-          [(ngModel)]="minPrice"
-          #minPrice="ngModel"
-          (keyup)="orderService.minPrice = minPrice.value"
-        />
-      </div>
-    </div>
-    <div class="col-6">
-      <div class="mb-3">
-        <label for="maxPrice" class="form-label">Max Ár:</label>
-        <input
-          type="number"
-          class="form-control-sm form-control"
-          name="maxPrice"
-          id="maxPrice"
-          placeholder=""
-          [(ngModel)]="maxPrice"
-          #maxPrice="ngModel"
-          (keyup)="orderService.maxPrice = maxPrice.value"
-        />
-      </div>
-    </div>
-  </div>
+      <!-- <mat-icon matSuffix>sentiment_very_satisfied</mat-icon> -->
+      <mat-hint>Hint</mat-hint>
+    </mat-form-field>
 
-  <div class="col-6 row">
-    <div class="col-6">
-      <div class="mb-3">
-        <label for="minDate" class="form-label">Dátum:</label>
-        <input
-          type="date"
-          class="form-control form-control-sm"
-          name="minDate"
-          id="minDate"
-          aria-describedby="helpId"
-          placeholder=""
-          [(ngModel)]="minDate"
-          #minDate
-          (change)="orderService.minDate = minDate.value"
-        />
-        <small id="helpId" class="form-text text-muted">Help text</small>
-      </div>
-    </div>
-    <div class="col-6">
-      <div class="mb-3">
-        <label for="maxDate" class="form-label">Dátum:</label>
-        <input
-          type="date"
-          class="form-control form-control-sm"
-          name="maxDate"
-          id="maxDate"
-          aria-describedby="helpId"
-          placeholder=""
-          [(ngModel)]="maxDate"
-          #maxDate
-          (change)="orderService.maxDate = maxDate.value"
-        />
-        <small id="helpId" class="form-text text-muted">Help text</small>
-      </div>
-    </div>
-  </div>
-  <div class="col-6">
-    <div class="mb-3">
-      <label for="status" class="form-label">Státusz</label>
-      <select
-        class="form-select form-select-sm"
-        name="status"
-        id="status"
+    <mat-form-field>
+      <mat-label>Státusz</mat-label>
+      <mat-select
         [(ngModel)]="status"
-        (change)="onStatusChange()"
+        (selectionChange)="onStatusChange()"
+        name="status"
       >
-        <option selected value="">Összes</option>
-        <option value="pending">Pending</option>
-        <option value="delivered">Delivered</option>
-        <option value="shipped">Shipped</option>
-      </select>
-    </div>
+        <mat-option selected value="">Összes</mat-option>
+        <mat-option value="pending">Pending</mat-option>
+        <mat-option value="delivered">Delivered</mat-option>
+        <mat-option value="shipped">Shipped</mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
-  <div class="col-6 offset-6 d-flex justify-content-end">
-    <button class="btn btn-danger me-2" type="reset">Törlés</button>
-    <button class="btn btn-success" type="submit">Szűrés</button>
+  <div class="flex-group">
+    <div class="form-group">
+      <label>Ár</label>
+      {{ "min-érték" }}
+      <mat-slider min="200" max="500">
+        <input matSliderStartThumb value="300" />
+        <input matSliderEndThumb value="400" />
+      </mat-slider>
+      {{ "max-érték" }}
+    </div>
+    <mat-form-field class="">
+      <mat-label>Min dátum</mat-label>
+      <input
+        matInput
+        [matDatepicker]="picker1"
+        [(ngModel)]="minDate"
+        #minDate
+        name="minDate"
+        (change)="orderService.minDate = minDate.value"
+      />
+      <mat-hint>MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="picker1">
+        <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
+      </mat-datepicker-toggle>
+      <mat-datepicker #picker1></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field class="">
+      <mat-label>Max dátum</mat-label>
+      <input
+        matInput
+        [matDatepicker]="picker2"
+        [(ngModel)]="maxDate"
+        #maxDate
+        name="maxDate"
+        (change)="orderService.maxDate = maxDate.value"
+      />
+      <mat-hint>MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="picker2">
+        <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
+      </mat-datepicker-toggle>
+      <mat-datepicker #picker2></mat-datepicker>
+    </mat-form-field>
+    <div class="flex-group">
+      <button matButton="tonal" type="reset">Törlés</button>
+      <button matButton="filled" type="submit">Szűrés</button>
+    </div>
   </div>
 </form>
 
-<div class="table-responsive mt-5">
-  <table class="table table-hover">
-    <thead>
-      <tr>
-        <th>Azonosító</th>
-        <th>Felhasználó</th>
-        <th class="text-end">Összeg</th>
-        <th>Dátum</th>
-        <th>Státusz</th>
-        <th>Műveletek</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for(order of orderService.$filteredOrders | async;track order.id){
-      <tr class="align-middle">
-        <td class="text-center">{{ order.id }}</td>
-        <td>
-          <img
-            [src]="order.user.avatar || '' | fallbackImage"
-            alt=""
-            class="img-thumbnail rounded-circle"
-          />
-          {{ order.user.name | shorten : 30 }}
-        </td>
-        <td class="text-end">{{ order.total | currency : "Ft" }}</td>
-        <td>{{ order.createdAt | date : "fullDate" }}</td>
-        <td>
-          @if(order.status==='pending'){
-          <span class="badge rounded-pill bg-light text-dark">{{
-            order.status
-          }}</span>
-          } @else if(order.status==='shipped'){
-          <span class="badge rounded-pill bg-primary">{{ order.status }}</span>
-          } @else{
-          <span class="badge rounded-pill bg-success">{{ order.status }}</span>
-          }
-        </td>
-        <td>
-          <button
-            class="btn btn-success me-2"
-            [class.disabled]="order.status !== 'pending'"
-          >
-            Szerkesztés
-          </button>
-          <button class="btn btn-danger">Törlés</button>
-        </td>
-      </tr>
+<div class="mat-elevation-zwasdasd8">
+  <table mat-table [dataSource]="dataSource">
+    <!-- Position Column -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef>Azonosító</th>
+      <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+    </ng-container>
 
-      }
-    </tbody>
+    <!-- Avatar Column-->
+    <ng-container matColumnDef="avatar">
+      <th mat-header-cell *matHeaderCellDef>Avatar</th>
+      <td mat-cell *matCellDef="let element">
+        <img
+          [src]="element.user.avatar"
+          [alt]="element.user.name + ' profile picture'"
+          class="img-thumbnail"
+        />
+      </td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Név</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.user.name }}
+      </td>
+    </ng-container>
+
+    <!-- Weight Column -->
+    <ng-container matColumnDef="total">
+      <th mat-header-cell *matHeaderCellDef>Összeg</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.total | currency : "Ft" }}
+      </td>
+    </ng-container>
+
+    <!-- Symbol Column -->
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Státusz</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.status }}
+      </td>
+    </ng-container>
+    <!-- Symbol Column -->
+    <ng-container matColumnDef="created">
+      <th mat-header-cell *matHeaderCellDef>Dátum</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.createdAt | date : "fullDate" }}
+      </td>
+    </ng-container>
+
+    <!-- Symbol Column -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Műveletek</th>
+      <td mat-cell *matCellDef="let element">
+        <button matIconButton="" [disabled]="element.status !== 'pending'">
+          <mat-icon fontIcon="edit"></mat-icon>
+        </button>
+        <button matIconButton="">
+          <mat-icon fontIcon="delete"></mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
+
+  <mat-paginator
+    [pageSizeOptions]="[5, 10, 20]"
+    showFirstLastButtons
+    aria-label="Select page of periodic elements"
+  >
+  </mat-paginator>
 </div>

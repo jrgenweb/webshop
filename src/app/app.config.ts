@@ -10,6 +10,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { routes } from './app.routes';
 import localeHu from '@angular/common/locales/hu';
 import { registerLocaleData } from '@angular/common';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 registerLocaleData(localeHu);
 
 export const appConfig: ApplicationConfig = {
@@ -18,6 +19,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(),
+    provideCharts(withDefaultRegisterables()),
     { provide: LOCALE_ID, useValue: 'hu' },
   ],
 };

@@ -1,0 +1,80 @@
+<h2 mat-dialog-title>Termék hozzáadása</h2>
+<form action="" [formGroup]="productForm" (submit)="onSubmit()">
+  <mat-dialog-content>
+    <mat-form-field class="full-width">
+      <mat-label>Termék megnevezése</mat-label>
+      <input matInput type="text" formControlName="title" />
+      <mat-hint>név</mat-hint>
+      <mat-error> A termék néve megadása kötelező! </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="full-width">
+      <mat-label>Termék leírása</mat-label>
+      <textarea
+        matInput
+        type="text"
+        name="description"
+        formControlName="description"
+      ></textarea>
+
+      <mat-error> A termék leírásának megadása kötelező! </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="full-width">
+      <mat-label>Termék ára</mat-label>
+      <input matInput type="number" formControlName="price" name="price" />
+
+      <mat-error> Az ár megadása kötelező! </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="full-width">
+      <mat-label>Kategória</mat-label>
+      <mat-select name="selectedCategory" formControlName="categoryId">
+        <mat-option value="" selected>Összes</mat-option>
+        @for(category of categories;track $index){
+        <mat-option [value]="category.id">{{ category.name }}</mat-option>
+        }
+      </mat-select>
+      <mat-error> Kategória kiválasztása kötelező! </mat-error>
+    </mat-form-field>
+
+    <div formArrayName="images">
+      <h3>Képek</h3>
+      @for(image of productFormImages.controls;track $index){
+
+      <div class="flex-group">
+        <img
+          [src]="image.value | fallbackImage"
+          alt=""
+          class="img-thumbnail rounded-circle"
+        />
+        <mat-form-field class="full-width">
+          <mat-label>Kép url</mat-label>
+          <input matInput type="text" [formControlName]="$index" />
+          <mat-error> A termék néve megadása kötelező! </mat-error>
+        </mat-form-field>
+        @if(productFormImages.length>1){
+        <button
+          matIconButton
+          class="btn-close"
+          (click)="removeImageForm($index)"
+        >
+          <mat-icon fontIcon="delete"></mat-icon>
+        </button>
+        }
+      </div>
+
+      }
+      <div class="d-flex justify-content-end">
+        <button matButton (click)="addImageForm()">
+          <mat-icon fontIcon="add"></mat-icon>
+          További kép hozzáadása
+        </button>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button matButton (click)="close(false)" type="button">Mégsem</button>
+    <button matButton="filled" color="warn" type="submit">Igen</button>
+  </mat-dialog-actions>
+</form>

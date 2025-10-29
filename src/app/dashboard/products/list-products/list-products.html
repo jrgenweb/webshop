@@ -1,277 +1,185 @@
-<app-modal
-  [show]="isOpenAddModal"
-  title="Termék hozzáadása"
-  confirmButton="Hozzáadás"
-  (confirmEvent)="addModalConfirmEvt($event)"
->
-  @let titleFC = (productForm.get('title')); @let priceFC =
-  (productForm.get('price')); @let categoryIdFC =
-  (productForm.get('categoryId')); @let descriptionFC =
-  (productForm.get('description'));
-  <form action="" [formGroup]="productForm" (submit)="onSubmit()">
-    <div class="mb-3">
-      <label for="title" class="form-label">Név</label>
-      <input
-        type="text"
-        class="form-control"
-        [class.is-valid]="titleFC?.touched && titleFC?.valid"
-        [class.is-invalid]="titleFC?.touched && titleFC?.invalid"
-        name="title"
-        id="title"
-        placeholder=""
-        formControlName="title"
-      />
-      @if(titleFC?.touched && titleFC?.invalid){
-      <small class="form-text text-danger">A név megadása kötelező!</small>
-      }
-    </div>
-    <div class="mb-3">
-      <label for="description" class="form-label">Leírás</label>
-      <textarea
-        class="form-control"
-        [class.is-valid]="descriptionFC?.touched && descriptionFC?.valid"
-        [class.is-invalid]="descriptionFC?.touched && descriptionFC?.invalid"
-        name=""
-        id=""
-        rows="3"
-        formControlName="description"
-      ></textarea>
-      @if(descriptionFC?.touched && descriptionFC?.invalid){
-      <small class="form-text text-danger">A leírás megadása kötelező!</small>
-      }
-    </div>
-
-    <div class="mb-3">
-      <label for="price" class="form-label">Ár</label>
-      <input
-        type="number"
-        class="form-control"
-        [class.is-valid]="priceFC?.touched && priceFC?.valid"
-        [class.is-invalid]="priceFC?.touched && priceFC?.invalid"
-        name="price"
-        id="price"
-        aria-describedby="helpId"
-        placeholder=""
-        formControlName="price"
-      />
-      @if(priceFC?.touched && priceFC?.invalid){
-      <small class="form-text text-danger">Az ár megadása kötelező!</small>
-      }
-    </div>
-    <div class="mb-3">
-      <label for="categoryId" class="form-label">Kategória</label>
-      <select
-        class="form-select form-select-md"
-        [class.is-valid]="categoryIdFC?.touched && categoryIdFC?.valid"
-        [class.is-invalid]="categoryIdFC?.touched && categoryIdFC?.invalid"
-        name="categoryId"
-        id="categoryId"
-        formControlName="categoryId"
-      >
-        <option value=""></option>
-        @for(category of categories;track category.id){
-
-        <option [ngValue]="category.id">{{ category.name }}</option>
-        }
-      </select>
-      @if(categoryIdFC?.touched && categoryIdFC?.invalid){
-      <small class="form-text text-danger"
-        >Kategória kiválasztása kötelező!</small
-      >
-      }
-    </div>
-    <div formArrayName="images">
-      <h4 class="mb-4">Képek</h4>
-      @for(image of productFormImages.controls;track $index){
-      <div class="">
-        <div
-          class="mb-3 d-flex align-items-center gap-1 justify-content-between"
-        >
-          <label for="" class="form-label text-nowrap">
-            <img
-              [src]="image.value | fallbackImage"
-              alt=""
-              class="img-thumbnail rounded-circle"
-            />
-          </label>
-          <input
-            type="text"
-            class="form-control flex-fill"
-            [class.is-valid]="image?.touched && image?.valid"
-            [class.is-invalid]="image?.touched && image?.invalid"
-            name=""
-            id=""
-            aria-describedby="helpId"
-            placeholder=""
-            [formControlName]="$index"
-          />
-          @if(productFormImages.length>1){
-          <button class="btn-close" (click)="removeImageForm($index)"></button>
-          }
-        </div>
-        @if(image?.touched && image.invalid){
-        <small id="helpId" class="form-text text-danger"
-          >Érvénytelen kép url</small
-        >
-        }
-      </div>
-      }
-      <div class="d-flex justify-content-end">
-        <button class="btn btn-primary btn-sm" (click)="addImageForm()">
-          További kép hozzáadása
-        </button>
-      </div>
-    </div>
-  </form>
-</app-modal>
-
-<app-modal
-  title="Törlés megerősítése"
-  [show]="isOpenConfirmModal"
-  (confirmEvent)="confirmModalEvt($event)"
-  confirmButton="Megerősítés"
->
-  <p>
-    Biztosan törölni szeretnéd a
-    <span class="fs-4 text-danger">{{ selectedProduct?.title }}</span>
-    terméket?
-  </p>
-</app-modal>
-
 <form
   class="filter row bg-light p-2 rounded-2 shadow"
   #filterForm="ngForm"
   (reset)="resetFilter()"
 >
-  <div class="col-6">
-    <label for="searchStringModel" class="form-label">Keresés</label>
-    <input
-      type="text"
-      class="form-control"
-      name="searchStringModel"
-      id="searchStringModel"
-      aria-describedby="helpId"
-      placeholder=""
-      [(ngModel)]="searchStringModel"
-      (keyup)="productService.searchString = searchStringModel"
-    />
+  <div class="flex-group">
+    <mat-form-field class="full-width">
+      <mat-label>Keresés</mat-label>
+      <input
+        type="text"
+        matInput
+        name="searchString"
+        #searchString
+        (keyup)="productService.searchString = searchString.value"
+      />
+      <!-- <mat-icon matSuffix>sentiment_very_satisfied</mat-icon> -->
+      <mat-hint>Hint</mat-hint>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Kategória</mat-label>
+      <mat-select
+        [(ngModel)]="selectedCategory"
+        (selectionChange)="onChangeCategory(selectedCategory)"
+        name="selectedCategory"
+      >
+        <mat-option value="0" selected>Összes</mat-option>
+        @for(category of categories;track $index){
+        <mat-option [value]="category.id">{{ category.name }}</mat-option>
+        }
+        <mat-option value="pending">Pending</mat-option>
+        <mat-option value="delivered">Delivered</mat-option>
+        <mat-option value="shipped">Shipped</mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
 
-  <div class="col-6">
-    <label for="selectedCategory" class="form-label"
-      >Kategória kiválasztása</label
-    >
-    <select
-      class="form-select form-select-md"
-      name="selectedCategory"
-      id="selectedCategory"
-      [(ngModel)]="selectedCategory"
-      (change)="onChangeCategory(selectedCategory)"
-    >
-      <option value="0" selected>Összes</option>
-      @for(category of categories;track $index){
-      <option [ngValue]="category.id">{{ category.name }}</option>
-      }
-    </select>
-  </div>
-  <div class="col-6 row">
-    <div class="col-6">
-      <label for="minPrice" class="form-label">Min ár</label>
-      <input
-        type="number"
-        class="form-control"
-        name="minPrice"
-        id="minPrice"
-        aria-describedby="helpId"
-        placeholder=""
-        [(ngModel)]="minPriceModel"
-        #minPriceModel="ngModel"
-        (keyup)="productService.minPrice = minPriceModel.value"
-      />
+  <div class="flex-group">
+    <div class="form-group">
+      <mat-label>Ár:</mat-label>
+      <mat-slider min="0" [max]="maxPrice">
+        <input
+          matSliderStartThumb
+          value="0"
+          #minPrice
+          (selectionchange)="productService.minPrice = minPrice.valueAsNumber"
+          (change)="productService.minPrice = minPrice.valueAsNumber"
+        />
+        <input matSliderEndThumb [value]="maxPrice" #maxPriceModel />
+      </mat-slider>
+      {{ minPrice.value | currency : "Ft" }}-tól -
+      {{ maxPriceModel.value | currency : "Ft" }}-ig
     </div>
-    <div class="col-6">
-      <label for="maxPrice" class="form-label">Max ár</label>
+
+    <mat-form-field class="">
+      <mat-label>Min dátum</mat-label>
       <input
-        type="number"
-        class="form-control"
-        name="maxPrice"
-        id="maxPrice"
-        aria-describedby="helpId"
-        placeholder=""
-        [(ngModel)]="maxPriceModel"
-        #maxPriceModel="ngModel"
-        (keyup)="productService.maxPrice = maxPriceModel.value"
+        matInput
+        [matDatepicker]="picker1"
+        [(ngModel)]="minDate"
+        #minDate
+        name="minDate"
       />
+      <mat-hint>MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="picker1">
+        <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
+      </mat-datepicker-toggle>
+      <mat-datepicker #picker1></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field class="">
+      <mat-label>Max dátum</mat-label>
+      <input
+        matInput
+        [matDatepicker]="picker2"
+        [(ngModel)]="maxDate"
+        #maxDate
+        name="maxDate"
+      />
+      <mat-hint>MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="picker2">
+        <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
+      </mat-datepicker-toggle>
+      <mat-datepicker #picker2></mat-datepicker>
+    </mat-form-field>
+    <div class="flex-group">
+      <button type="reset" matButton="">Törlés</button>
+      <button class="btn btn-success w-25" matButton="filled">Szűrés</button>
     </div>
-  </div>
-  <div class="col-6 d-flex align-items-center justify-content-center">
-    <button type="reset" class="btn btn-danger me-2 w-25">Törlés</button>
-    <button class="btn btn-success w-25">Szűrés</button>
   </div>
 </form>
 
-<div class="d-flex justify-content-end">
-  <button class="btn btn-success my-5" (click)="openAddModal()">
+<div class="flex-group justify-content-end">
+  <button matFab extended (click)="openAddDialog()">
+    <mat-icon fontIcon="add"></mat-icon>
     Hozzáadás
   </button>
 </div>
-
-@let products = (productService.$filteredProducts | async); @if(products &&
-products.length>0){
+@if(dataSource.data.length>0){
 <div class="table-responsive">
-  <table class="table table-hover">
-    <thead>
-      <tr>
-        <th>Azonosító</th>
-        <th>Kép</th>
-        <th>Név</th>
-        <th>Ár</th>
-        <th>Kategória</th>
-        <th>Létrehozva</th>
-        <th>Módosítva</th>
-        <th>Műveletek</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for(product of products;track $index){
-      <tr class="align-middle">
-        <td>
-          {{ product.id }}
-        </td>
-        <td>
+  <div class="mat-elevation-8">
+    <table mat-table [dataSource]="dataSource">
+      <!-- Position Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>Azonosító</th>
+        <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+      </ng-container>
+
+      <!-- Avatar Column-->
+      <ng-container matColumnDef="avatar">
+        <th mat-header-cell *matHeaderCellDef>Avatar</th>
+        <td mat-cell *matCellDef="let element">
           <img
-            [src]="product.images[0] | fallbackImage"
-            alt=""
-            class="img-thumbnail rounded-circle"
+            [src]="element.images[0] | fallbackImage"
+            [alt]="element.title + '  picture'"
+            class="img-thumbnail"
           />
         </td>
-        <td>
-          {{ product.title | shorten : 30 }}
-        </td>
-        <td>
-          {{ product.price | currency : "Ft" }}
-        </td>
-        <td>{{ product.category.name }}</td>
-        <td>
-          {{ product.creationAt | date : "fullDate" }}
-        </td>
-        <td>{{ product.updatedAt | date : "fullDate" }}</td>
+      </ng-container>
 
-        <td>
-          <button class="btn btn-success me-2" (click)="editProduct(product)">
-            Szerkesztés
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Név</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.title }}
+        </td>
+      </ng-container>
+
+      <!-- Total Column -->
+      <ng-container matColumnDef="price">
+        <th mat-header-cell *matHeaderCellDef>Összeg</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.price | currency : "Ft" }}
+        </td>
+      </ng-container>
+
+      <!-- Category Column -->
+      <ng-container matColumnDef="category">
+        <th mat-header-cell *matHeaderCellDef>Kategória</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.category.name }}
+        </td>
+      </ng-container>
+      <!-- Created Column -->
+      <ng-container matColumnDef="created">
+        <th mat-header-cell *matHeaderCellDef>Létrehozva</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.creationAt | date : "fullDate" }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="updated">
+        <th mat-header-cell *matHeaderCellDef>Módosítva</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.updatedAt | date : "fullDate" }}
+        </td>
+      </ng-container>
+
+      <!-- Action Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Műveletek</th>
+        <td mat-cell *matCellDef="let element">
+          <button matIconButton="" (click)="openAddDialog(element)">
+            <mat-icon fontIcon="edit"></mat-icon>
           </button>
-          <button class="btn btn-danger" (click)="openConfirmModal(product)">
-            Törlés
+          <button matIconButton="" (click)="openConfirmDialog(element)">
+            <mat-icon fontIcon="delete" color="accent"></mat-icon>
           </button>
         </td>
-      </tr>
+      </ng-container>
 
-      }
-    </tbody>
-  </table>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <mat-paginator
+      [pageSizeOptions]="[5, 10, 20]"
+      showFirstLastButtons
+      aria-label="Select page of periodic elements"
+    >
+    </mat-paginator>
+  </div>
 </div>
-
 }@else {
-<h3 class="text-center my-5">Nincsenek megjeleníthető adatok!</h3>
+
+<h2>Nincsen megjelníthető adat</h2>
 }

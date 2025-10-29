@@ -1,0 +1,31 @@
+.card-stepper {
+    .slider-container {
+        position: relative;
+        display: flex;
+        overflow: hidden;
+        width: 100%;
+
+        ::ng-deep > .slide {
+            flex: 0 0 50%;
+            transition: transform 0.3s ease;
+            padding: 1rem;
+        }
+    }
+
+    .btn-prev,
+    .btn-next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 100;
+    }
+
+    .btn-prev {
+        left: 0;
+    }
+    .btn-next {
+        right: 0;
+    }
+}
+
+//a gombok csak mobilon jelenjenek emg, desktopon pedig hover-re

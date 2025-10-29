@@ -1,0 +1,28 @@
+<h2 mat-dialog-title>Kategória hozzáadása</h2>
+<form action="" [formGroup]="categoryForm" (submit)="onSubmit()">
+  <mat-dialog-content>
+    <mat-form-field class="full-width">
+      <mat-label>Kategória neve</mat-label>
+      <input matInput type="text" formControlName="name" />
+      <mat-hint>név</mat-hint>
+      <mat-error> A kategória neve megadása kötelező! </mat-error>
+    </mat-form-field>
+
+    <div class="flex-group">
+      <img
+        [src]="imageRef.value | fallbackImage"
+        alt=""
+        class="img-thumbnail rounded-circle"
+      />
+      <mat-form-field class="full-width">
+        <mat-label>Kép url</mat-label>
+        <input matInput type="text" formControlName="image" #imageRef />
+        <mat-error> Kép url megadása kötelező! </mat-error>
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button matButton (click)="close(false)" type="button">Mégsem</button>
+    <button matButton="filled" color="warn" type="submit">Igen</button>
+  </mat-dialog-actions>
+</form>

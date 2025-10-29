@@ -1,19 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, effect, OnInit, ViewChild } from '@angular/core';
 import { Category } from '../../../shared/services/category';
-import { ToastService } from '../../../shared/services/toast';
+
 import { ICategory } from '../../../shared/interfaces/IProduct';
 import { FallbackImagePipe } from '../../../shared/pipes/fallback-image-pipe';
 import { DatePipe } from '@angular/common';
-import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ShortenPipe } from '../../../shared/pipes/shorten-pipe';
-import { Modal } from '../../modal/modal';
-import { isValidImage } from '../../../shared/validators/is-valid-image.validator';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { AddCategoryDialog } from './add-category-dialog/add-category-dialog';
+import { ConfirmDialog } from '../../confirm-dialog/confirm-dialog';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatIcon } from '@angular/material/icon';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-list-categories',
@@ -23,156 +24,85 @@ import { isValidImage } from '../../../shared/validators/is-valid-image.validato
     FormsModule,
     ReactiveFormsModule,
     ShortenPipe,
-    Modal,
+    MatTableModule,
+    MatButtonModule,
+    MatInputModule,
+    MatIcon,
+    MatPaginatorModule,
   ],
   templateUrl: './list-categories.html',
   styleUrl: './list-categories.scss',
 })
-export class ListCategories implements OnInit {
+export class ListCategories {
   categories: ICategory[] = [];
-
-  isOpenAddModal = false;
-  isOpenConfirmModal = false;
   searchStringModel!: string;
-  editMode = false;
   selectedCategory!: ICategory | null;
 
-  categoryForm!: FormGroup;
+  dataSource!: MatTableDataSource<ICategory>;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+  displayedColumns: string[] = [
+    'id',
+    'image',
+    'name',
+    'slug',
+    'created',
+    'updated',
+    'actions',
+  ];
   constructor(
     public categoryService: Category,
-    public toastService: ToastService
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) {
-    this.createForm();
-  }
-
-  createForm(category?: ICategory) {
-    this.categoryForm = new FormGroup({
-      name: new FormControl(category ? category.name : '', [
-        Validators.required,
-      ]),
-      image: new FormControl(
-        category ? category.image : '',
-        [Validators.required],
-        [isValidImage()]
-      ),
+    effect(() => {
+      const cats = this.categoryService.filteredCategories(); // lekérdezi a signal aktuális értékét
+      this.dataSource = new MatTableDataSource(cats); // beállítja a táblázatot
+      this.dataSource.paginator = this.paginator;
     });
   }
 
-  ngOnInit(): void {
-    this.categoryService.getAll().subscribe({
-      next: (response) => {
-        this.categories = response as ICategory[];
-      },
-      error: (err) => {
-        this.toastService.show(
-          'Hiba a kategóriák betöltésekor',
-          'bg-danger',
-          3000
-        );
-        console.log(err);
+  openConfirmDialog(category: ICategory) {
+    const dialogRef = this.dialog.open(ConfirmDialog, {
+      data: {
+        title: 'Törlés megerősítése',
+        itemName: category.name,
+        message: 'Biztosan törölni szeretnéd ?',
       },
     });
-  }
-
-  openAddModal(category?: ICategory) {
-    if (category) {
-      this.createForm(category);
-      this.selectedCategory = category;
-      this.editMode = true;
-    } else {
-      this.editMode = false;
-      this.selectedCategory = null;
-      this.categoryForm.reset();
-    }
-    this.isOpenAddModal = true;
-  }
-
-  onAddModalConfirmEvent(state: boolean) {
-    if (state) {
-      //this.categoryService.add()
-
-      this.addProduct();
-    } else {
-      this.isOpenAddModal = false;
-    }
-  }
-
-  openConfirmModal(category: ICategory) {
-    this.isOpenConfirmModal = true;
-    this.selectedCategory = category;
-  }
-
-  confirmDeleteEvt(state: boolean) {
-    if (state) {
-      this.categoryService.delete(this.selectedCategory!.id).subscribe({
-        next: (response) => {
-          this.selectedCategory = null;
-          this.isOpenConfirmModal = false;
-          this.toastService.show(
-            'Sikeres kategória törlés',
-            'bg-success',
-            3000
-          );
-        },
-        error: (err) => {
-          this.toastService.show(
-            'Hiba a kategória törlésekor',
-            'bg-danger',
-            3000
-          );
-          console.error(err);
-        },
-      });
-    } else {
-      this.selectedCategory = null;
-    }
-  }
-
-  addProduct() {
-    this.categoryForm.markAllAsTouched();
-    if (this.categoryForm.valid) {
-      const category = this.categoryForm.value;
-      if (this.editMode) {
-        category.id = this.selectedCategory?.id;
-        this.categoryService.update(category).subscribe({
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.categoryService.delete(category.id).subscribe({
           next: (response) => {
-            this.toastService.show(
-              'Sikeres kategória módosítás',
-              'bg-success',
-              3000
-            );
-            this.isOpenAddModal = false;
-            this.categoryForm.reset();
+            this.snackBar.open('Sikeres termék törlés', 'snackbar-success');
           },
           error: (err) => {
-            this.toastService.show(
-              'Sikertelen kategória módosítás',
-              'bg-danger',
-              3000
-            );
-          },
-        });
-      } else {
-        this.categoryService.add(category).subscribe({
-          next: (response) => {
-            this.toastService.show(
-              'Sikeres kategória hozzáadás',
-              'bg-success',
-              3000
-            );
-            this.isOpenAddModal = false;
-            this.categoryForm.reset();
-          },
-          error: (err) => {
-            this.toastService.show(
-              'Sikertelen kategória hozzáadás',
-              'bg-danger',
-              3000
-            );
+            this.snackBar.open('Hiba a termék törlésekor', 'snackbar-error');
           },
         });
       }
-    }
+    });
+  }
+
+  openAddDialog(category?: ICategory) {
+    const dialogRef = this.dialog.open(AddCategoryDialog, {
+      data: { category: category },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result)
+        if (category) {
+          //akkor az update-t hívjuk meg
+          result.id = category.id;
+          this.categoryService.update(result).subscribe(() => {
+            this.snackBar.open('Sikeresen módosítottad a kategóriát', 'OK');
+          });
+        } else {
+          //hozzáadunk 1-et
+          this.categoryService.add(result).subscribe(() => {
+            this.snackBar.open('Sikeres kategória felvitel', 'OK');
+          });
+        }
+    });
   }
 }

@@ -1,4 +1,11 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  inject,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { Product } from '../../../shared/services/product';
 import { AsyncPipe, CurrencyPipe, DatePipe } from '@angular/common';
 import {
@@ -17,6 +24,20 @@ import { Modal } from '../../modal/modal';
 import { isValidImage } from '../../../shared/validators/is-valid-image.validator';
 import { ShortenPipe } from '../../../shared/pipes/shorten-pipe';
 import { FallbackImagePipe } from '../../../shared/pipes/fallback-image-pipe';
+import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatSlider, MatSliderModule } from '@angular/material/slider';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatAnchor, MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ConfirmDialog } from '../../confirm-dialog/confirm-dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { AddProductsDialog } from './add-products-dialog/add-products-dialog';
 
 @Component({
   selector: 'app-list-products',
@@ -29,36 +50,67 @@ import { FallbackImagePipe } from '../../../shared/pipes/fallback-image-pipe';
     DatePipe,
     ShortenPipe,
     FallbackImagePipe,
+    MatFormField,
+    MatIcon,
+    MatHint,
+    MatFormField,
+    MatLabel,
+    MatSlider,
+    MatInputModule,
+    MatSliderModule,
+    MatDatepickerModule,
+    MatAnchor,
+    MatButtonModule,
+    MatSelectModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatDialogModule,
   ],
   templateUrl: './list-products.html',
   styleUrl: './list-products.scss',
+  providers: [provideNativeDateAdapter()],
 })
-export class ListProducts implements OnInit {
+export class ListProducts implements OnInit, AfterViewInit {
   categories: ICategory[] = [];
   selectedCategory = 0;
-  isOpenAddModal = false;
-  isOpenConfirmModal = false;
+
   searchStringModel!: string;
-  editMode = false;
-  selectedProduct!: IProduct | null;
+
+  maxPrice!: number;
 
   productForm!: FormGroup;
 
-  //@ViewChild('filterForm') filterForm!: NgForm;
+  displayedColumns: string[] = [
+    'id',
+    'avatar',
+    'name',
+    'price',
+    'category',
+    'created',
+    'updated',
+    'actions',
+  ];
+  dataSource!: MatTableDataSource<IProduct>;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
     public productService: Product,
     private categoriesService: Category,
-    public toastService: ToastService
+    public toastService: ToastService,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) {
-    this.productForm = new FormGroup({
-      title: new FormControl('', [Validators.required]),
-      price: new FormControl('', [Validators.required]),
-      description: new FormControl('', [Validators.required]),
-      categoryId: new FormControl('', [Validators.required]),
-      images: new FormArray([
-        new FormControl('', [Validators.required], isValidImage()),
-      ]),
+    this.productService.$filteredProducts.subscribe((products) => {
+      this.dataSource = new MatTableDataSource(products);
+      this.dataSource.paginator = this.paginator;
+      if (products && products.length > 0)
+        this.maxPrice =
+          products.length > 0
+            ? products.reduce((acc, curr) => {
+                if (acc < curr.price) acc = curr.price;
+                return acc;
+              }, 0)
+            : 0;
     });
   }
   ngOnInit(): void {
@@ -79,135 +131,71 @@ export class ListProducts implements OnInit {
     });
     this.productService.applyFilter();
   }
-
-  get productFormImages(): FormArray {
-    return this.productForm.get('images') as FormArray;
-  }
-  addImageForm() {
-    this.productFormImages.push(
-      new FormControl('', [Validators.required], [isValidImage()])
-    );
-  }
-  removeImageForm(i: number) {
-    if (this.productFormImages.length > 1) {
-      this.productFormImages.removeAt(i);
-    }
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
   }
   onChangeCategory(categoryId: number) {
     this.productService.selectedCategoryId = Number(categoryId);
   }
 
-  addModalConfirmEvt(state: boolean) {
-    console.log(state);
-    if (state) {
-      this.onSubmit();
-      this.toastService.show('Mentés gomb', 'bg-primary', 3000);
-      this.isOpenAddModal = false;
-    } else {
-      this.isOpenAddModal = false;
-    }
+  openSnackBar(
+    message: string,
+    type: 'snackbar-success' | 'snackbar-error' | 'snackbar-info',
+    action: string = 'OK',
+    duration: number = 3000
+  ) {
+    this.snackBar.open(message, action, {
+      duration, // ms, mennyi ideig látszik
+      horizontalPosition: 'right', // 'start' | 'center' | 'end' | 'left' | 'right'
+      verticalPosition: 'top', // 'top' | 'bottom'
+      panelClass: type,
+    });
   }
-
-  confirmModalEvt(state: boolean) {
-    console.log(state);
-    if (state) {
-      this.deleteProduct(this.selectedProduct!);
-    } else {
-      this.isOpenConfirmModal = false;
-    }
-  }
-
-  deleteProduct(product: IProduct) {
-    this.productService.delete(product).subscribe({
-      next: (response) => {
-        this.toastService.show('Sikeres termék törlés', 'bg-success', 3000);
-        this.isOpenConfirmModal = false;
-      },
-      error: (err) => {
-        this.toastService.show('Hiba a termék törlésekor', 'bg-danger', 3000);
-        this.isOpenConfirmModal = false;
+  openConfirmDialog(product: IProduct) {
+    const dialogRef = this.dialog.open(ConfirmDialog, {
+      data: {
+        title: 'Törlés megerősítése',
+        itemName: product.title,
+        message: 'Biztosan törölni szeretnéd ?',
       },
     });
-  }
-
-  openConfirmModal(product: IProduct) {
-    this.selectedProduct = product;
-    this.isOpenConfirmModal = true;
-  }
-
-  editProduct(product: IProduct) {
-    this.editMode = true;
-    this.isOpenAddModal = true;
-    this.selectedProduct = product;
-
-    this.productForm = new FormGroup({
-      title: new FormControl(this.selectedProduct.title, [Validators.required]),
-      price: new FormControl(this.selectedProduct.price, [Validators.required]),
-      description: new FormControl(this.selectedProduct.description, [
-        Validators.required,
-      ]),
-      categoryId: new FormControl(this.selectedProduct.category.id, [
-        Validators.required,
-      ]),
-      images: new FormArray([]),
-    });
-
-    this.selectedProduct.images.forEach((i) => {
-      console.log(i);
-      this.productFormImages.push(
-        new FormControl(i, [Validators.required], isValidImage())
-      );
-    });
-  }
-
-  onSubmit() {
-    this.productForm.markAllAsTouched();
-
-    if (this.productForm.valid) {
-      if (!this.editMode) {
-        this.productService.add(this.productForm.value).subscribe({
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.productService.delete(product).subscribe({
           next: (response) => {
-            this.toastService.show(
-              'Termék sikeresen hozzáadva' as string,
-              'bg-primary',
-              3000
-            );
+            this.openSnackBar('Sikeres termék törlés', 'snackbar-success');
           },
           error: (err) => {
-            this.toastService.show(
-              'Hiba a termék felvitele során',
-              'bg-danger',
-              3000
-            );
-            console.log(err);
-          },
-        });
-      } else {
-        const product = this.productForm.value;
-        product.id = this.selectedProduct!.id;
-        this.productService.update(product).subscribe({
-          next: (response) => {
-            this.toastService.show('Sikeresen módosítva', 'bg-success', 3000);
-            this.editMode = false;
-            this.productForm.reset();
-
-            console.log(response);
-          },
-          error: (err) => {
-            console.log(err);
-            this.toastService.show('Sikertelen módosítás', 'bg-danger', 3000);
+            this.openSnackBar('Hiba a termék törlésekor', 'snackbar-error');
           },
         });
       }
-    }
+    });
   }
+  openAddDialog(product?: IProduct) {
+    const dialogRef = this.dialog.open(AddProductsDialog, {
+      data: { product: product, categories: this.categories },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(result);
+      if (result)
+        if (product) {
+          //akkor az update-t hívjuk meg
+          result.id = product.id;
+          this.productService.update(result).subscribe(() => {
+            this.snackBar.open('Sikeresen módosítottad a terméket', 'OK');
+          });
+        } else {
+          //hozzáadunk 1-et
+          this.productService.add(result).subscribe(() => {
+            this.snackBar.open('Sikeres termék felvitel', 'OK');
+          });
+        }
+    });
+  }
+
   resetFilter() {
     this.productService.clearFilter();
-  }
-  openAddModal() {
-    this.productForm.reset();
-    this.editMode = false;
-    this.selectedProduct = null;
-    this.isOpenAddModal = true;
   }
 }

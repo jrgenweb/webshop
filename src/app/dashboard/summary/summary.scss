@@ -1,6 +1,69 @@
 .summary-cards {
     cursor: pointer;
-    .card:hover {
+
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    .card {
         background-color: rgba(211, 211, 211, 0.205);
+        .card-value {
+            display: block;
+
+            font-size: 1.8rem;
+            text-align: center;
+            margin: 0.5rem;
+        }
     }
+}
+
+.newe2st-products {
+    $gap: 1rem;
+    max-width: calc(100% - ($gap * 2));
+    overflow: hidden;
+    .card-container {
+        display: flex;
+        gap: $gap;
+        overflow-x: auto;
+        .card {
+            max-width: 350px;
+        }
+    }
+}
+
+.slide {
+    max-width: 300px;
+    min-width: 200px;
+    img {
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: cover;
+    }
+}
+
+.charts-container {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+
+    .chart {
+        flex: auto;
+        width: calc(50% - 2rem);
+        min-width: 350px;
+    }
+}
+mat-divider {
+    margin: 2rem;
+}
+
+/* scrollbar */
+::-webkit-scrollbar {
+    height: 0.5rem;
+
+    background-color: var(--mat-sys-surface-container);
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 0.5rem;
+    background-color: var(--mat-sys-on-surface-variant);
 }

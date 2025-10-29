@@ -22,7 +22,7 @@ import { ListCategories } from './dashboard/products/list-categories/list-catego
 export const routes: Routes = [
   {
     path: '',
-    component: Webshop,
+    loadComponent: () => import('./webshop/webshop').then((c) => c.Webshop),
     children: [
       {
         path: 'webshop',
@@ -43,7 +43,9 @@ export const routes: Routes = [
   },
   {
     path: 'dashboard',
-    component: Dashboard,
+    loadComponent: () =>
+      import('./dashboard/dashboard').then((c) => c.Dashboard),
+    //component: Dashboard,
     children: [
       { path: 'summary', component: Summary },
       { path: 'orders', component: Orders },

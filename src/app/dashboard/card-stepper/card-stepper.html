@@ -1,0 +1,14 @@
+<mat-card class="card-stepper">
+  <mat-card-content class="card-stepper">
+    <mat-card-title>{{ title }}</mat-card-title>
+    <div class="slider-container" #container>
+      <button (click)="prev()" matIconButton="tonal" class="btn-prev">
+        <mat-icon fontIcon="chevron_left"></mat-icon>
+      </button>
+      <ng-content></ng-content>
+      <button (click)="next()" matIconButton="tonal" class="btn-next">
+        <mat-icon fontIcon="chevron_right"></mat-icon>
+      </button>
+    </div>
+  </mat-card-content>
+</mat-card>

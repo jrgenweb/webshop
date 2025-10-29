@@ -1,110 +1,76 @@
-<div class="row g-3 mb-4 summary-cards">
-  <div
-    class="col-md-4"
-    *ngFor="
-      let card of [
-        {
-          title: 'Összes termék',
-          value: summary().totalProducts,
-          url: '/dashboard/products'
-        },
-        {
-          title: 'Kategóriák száma',
-          value: summary().totalCategories,
-          url: '/dashboard/products/categories'
-        },
-        {
-          title: 'Felhasználók',
-          value: summary().totalUsers,
-          url: '/dashboard/users'
-        },
-        {
-          title: 'Megrendelések',
-          value: summary().totalOrders,
-          url: '/dashboard/orders'
-        }
-      ]
-    "
-  >
-    <div class="card shadow-sm text-center">
-      <div class="card-body" [routerLink]="card.url">
-        <h6 class="text-secondary">{{ card.title }}</h6>
-        <h3 class="fw-bold">{{ card.value }}</h3>
-      </div>
+<div class="summary">
+  <div class="summary-cards">
+    @for(card of summaryCardData;track $index){
+
+    <div class="card">
+      <mat-card [routerLink]="card.url">
+        <mat-card-content>
+          <mat-card-title>{{ card.title }} </mat-card-title>
+          <mat-card-subtitle>
+            <span class="card-value">
+              {{ card.value }}
+            </span>
+          </mat-card-subtitle>
+        </mat-card-content>
+      </mat-card>
     </div>
-  </div>
-</div>
 
-<div class="row">
-  <div class="col-12 col-md-6">
-    <!-- Termékszám kategóriánként -->
-    <div class="card shadow-sm mb-4">
-      <div class="card-body">
-        <h5 class="card-title mb-3">Termékek kategóriánként</h5>
-
-        <div *ngFor="let cat of productCountByCategory()">
-          <div class="d-flex justify-content-between small">
-            <span>{{ cat.name }}</span>
-            <span>{{ cat.count }}</span>
-          </div>
-          <div class="progress mb-2" style="height: 6px">
-            <div
-              class="progress-bar bg-primary"
-              role="progressbar"
-              [style.width]="
-                (cat.count /
-                  (summary().productCountByCategory | maxValue : 'count')) *
-                  100 +
-                '%'
-              "
-            ></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-12 col-md-6">
-    <!-- Átlagár kategóriánként -->
-    <div class="card shadow-sm mb-4">
-      <div class="card-body">
-        <h5 class="card-title mb-3">Átlagár kategóriánként</h5>
-
-        <div *ngFor="let cat of avgPriceByCategory()">
-          <div class="d-flex justify-content-between small">
-            <span>{{ cat.name }}</span>
-            <span>{{ cat.avg | currency : "HUF" : "symbol" : "1.0" }}</span>
-          </div>
-          <div class="progress mb-2" style="height: 6px">
-            <div
-              class="progress-bar bg-success"
-              role="progressbar"
-              [style.width]="
-                (cat.avg / (summary().avgPriceByCategory | maxValue : 'avg')) *
-                  100 +
-                '%'
-              "
-            ></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Legújabb termékek -->
-<div class="col-12">
-  <h5 class="mb-3">Legújabb termékek</h5>
-  <div class="d-flex flex-nowrap gap-2 overflow-x-auto">
-    @for(p of newestProducts();track p.id){
-    <div class="card" style="min-width: 15rem">
-      <img [src]="p.images[0] | fallbackImage" class="card-img-top" alt="..." />
-      <div class="card-body">
-        <h5 class="card-title">{{ p.title }}</h5>
-        <p class="card-text">{{ p.description | shorten : 30 }}</p>
-        <a class="btn btn-primary">Megtekintés</a>
-      </div>
-    </div>
     }
+  </div>
+
+  <mat-divider></mat-divider>
+  <div class="charts-container">
+    <div class="chart">
+      <mat-card>
+        <mat-card-content>
+          <mat-card-title> Termékek száma kategóriánként </mat-card-title>
+          <canvas
+            baseChart
+            [data]="productCountChartData"
+            [labels]="productCountChartData.labels"
+            [options]="productCountChartOptions"
+          >
+          </canvas>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="chart">
+      <mat-card>
+        <mat-card-content>
+          <mat-card-title>Átlagár kategóriánként</mat-card-title>
+          <canvas
+            baseChart
+            [data]="avgPriceChartData"
+            [labels]="avgPriceChartData.labels"
+            [options]="avgPriceChartOptions"
+          >
+          </canvas>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+  <mat-divider></mat-divider>
+  <!-- Legújabb termékek -->
+  <div class="newest-products" style="">
+    <app-card-stepper title="Legújabb termékek">
+      @for(p of newestProducts();track p.id){
+      <div class="card" #slide class="slide">
+        <mat-card>
+          <img [src]="p.images[0] | fallbackImage" mat-card-image />
+          <mat-card-content>
+            <mat-card-title>{{ p.title | shorten : 24 }}</mat-card-title>
+            <p>
+              {{ p.description | shorten : 50 }}
+            </p>
+          </mat-card-content>
+          <mat-card-actions class="flex-group justify-content-end">
+            <button matButton>Megtekintés</button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+
+      }
+    </app-card-stepper>
   </div>
 </div>

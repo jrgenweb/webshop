@@ -11,9 +11,9 @@ import { ProductCard } from './product-card/product-card';
 
 @Component({
   selector: 'app-list-products',
-  imports: [Filter, FormsModule, AsyncPipe, ProductCard, NgIf],
+  imports: [Filter, FormsModule, AsyncPipe, ProductCard],
   templateUrl: './list-products.html',
-  styleUrl: './list-products.scss',
+  styleUrls: ['./list-products.scss'],
 })
 export class ListProducts implements OnInit {
   categories!: ICategory[];
